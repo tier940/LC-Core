@@ -1,8 +1,6 @@
 # LegacyCraft-Core
 
-**A Forge CoreMod for Minecraft 1.12.2 that silently fixes runtime crashes and missing connections caused by API mismatches between the mods in the [LegacyCraft](https://www.curseforge.com/minecraft/modpacks/legacycraft) modpack.**
-
-All patches are applied transparently at class-load time using ASM bytecode transformation. No config needed, no gameplay changes — it simply makes incompatible mods work together.
+**A compatibility patch mod for Minecraft 1.12.2 that fixes crashes and broken connections between mods in the [LegacyCraft](https://www.curseforge.com/minecraft/modpacks/legacycraft) modpack.**
 
 ---
 
@@ -10,43 +8,56 @@ All patches are applied transparently at class-load time using ASM bytecode tran
 
 ### AkutoEngine + BuildCraft Remastered
 
-flyingperson23's BuildCraft Remastered changed two internal APIs after AkutoEngine 2.0.13 was released. Without this CoreMod, the game crashes immediately on startup with `NoSuchMethodError`.
+Without this mod, the game crashes every time on startup when both AkutoEngine and BuildCraft Remastered are installed together.
 
-**Gate recipe crash on startup**
+**Game crashes on startup**
 
-> AkutoEngine calls `new GateVariant(logic, material, modifier)` with 3 arguments, but BuildCraft Remastered dropped the `EnumGateModifier` parameter from the constructor. LC-Core rewrites the call site in `ObjHandler.registerRecipes()` to discard the unused modifier and invoke the correct 2-argument constructor instead.
-
-**Engine MJ power crash**
-
-> AkutoEngine calls `getReceiverToPower(TileEntity, EnumFacing)` with 2 arguments, but BuildCraft Remastered removed the `TileEntity` parameter. LC-Core rewrites every call site in `TileEntityAkutoEngineBase` to drop the `TileEntity` from the stack and invoke the correct 1-argument version — allowing engines to push MJ power normally.
+> AkutoEngine was built against an older version of BuildCraft Remastered. Two internal APIs it relies on were later changed, causing the game to crash before the world even loads. LC-Core silently patches the incompatible calls at startup so both mods can coexist.
 
 ---
 
-### Logistics Pipes 0.10.4.28+ + BuildCraft Remastered / IC2 Classic
+### Logistics Pipes + BuildCraft Remastered
 
-LP 0.10.4.28 quietly removed three pipe-connection checks that existed in 0.10.4.27. As a result, pipes with power-related upgrades installed lose the ability to connect to adjacent machines entirely.
+Installing LP 0.10.4.28 or later breaks the physical pipe connection between Logistics Pipes and BuildCraft Lasers or any Forge Energy machine.
 
-**RF Power Supplier Upgrade does not connect to BC Laser or Forge Energy machines**
+**RF Power Supplier Upgrade stops connecting to Lasers and Forge Energy machines**
 
-> LP 0.10.4.28+ removed the Forge Energy receiver check from `canPipeConnect_internal()`, so a Logistics Pipe with the RF Power Supplier Upgrade installed never forms a physical connection to BuildCraft Lasers or any `IEnergyStorage`-capable block.
+> After upgrading LP, a pipe fitted with the RF Power Supplier Upgrade will no longer show a connection stub to any BuildCraft Laser or Forge Energy block — power delivery stops entirely. LC-Core restores the connection so the pipe attaches properly. Fully-charged batteries are not wastefully topped off; LP's own power logic still governs actual delivery.
+
+---
+
+### Logistics Pipes + IC2 Classic
+
+The same LP 0.10.4.28 update also broke connections to IC2 Classic machines, stopping EU power delivery.
+
+**IC2 EU Power Supplier Upgrade stops connecting to IC2 machines**
+
+> A pipe with the EU Power Supplier Upgrade installed will no longer attach to IC2 Classic machines after upgrading LP. LC-Core restores the missing connection check so EU power upgrades work normally again.
+
+---
+
+### Logistics Pipes + EnderIO
+
+LP 0.10.4.28 broke the connection between Logistics Pipes routing pipes and EnderIO item conduits.
+
+**Routing pipes no longer attach to EnderIO item conduits**
+
+> LP pipes adjacent to EnderIO item conduits lose their connection stub after LP 0.10.4.28. LC-Core re-applies the missing check and handles the difference between LP 0.10.4.27–0.10.4.48 and LP 0.10.4.49+ automatically — no crashes across LP versions.
+
+---
+
+### Logistics Pipes + Additional Pipes
+
+LP 0.10.4.28 removed its built-in support for routing through Additional Pipes teleport pipes, making anything on the other side of a teleport pipe effectively unreachable.
+
+**Items and power cannot be routed through AP teleport pipes**
+
+> After the LP update, the routing network has no awareness of teleport pipe connections. Providers placed beyond a teleport pipe become invisible to requesters, and items sent toward a full or missing destination are lost rather than being returned.
 >
-> LC-Core restores this check using `tile.hasCapability(CapabilityEnergy.ENERGY, facing)`. Crucially, it checks for *capability presence* rather than battery state, so the pipe stub is always shown on Forge Energy blocks regardless of whether the battery is currently full. Actual power delivery is still gated by LP's own logic (`requestRFPower()` → `isEnergyReceiver()`), so no power is wasted to already-full batteries.
-
-**IC2 EU Power Supplier Upgrade does not connect to IC2 machines**
-
-> The same LP 0.10.4.28 change also removed the IC2 energy-sink check. LC-Core restores `IC2Proxy.isEnergySink()` connectivity, guarded by the pipe's `getIC2PowerLevel() > 0` condition, so EU power upgrades reconnect to IC2 Classic machines.
-
-**EnderIO conduit connection (LP 0.10.4.27 – 0.10.4.48)**
-
-> LP 0.10.4.28 removed the `enderIOProxy.isItemConduit()` check. LP 0.10.4.49 went further and deleted the `SimpleServiceLocator.enderIOProxy` field entirely. LC-Core detects at transform time whether the field is present and emits the EnderIO conduit check only when it exists — no crashes across LP versions.
-
----
-
-## Additional Robustness
-
-**Automatic MCP/SRG method name detection**
-
-> In production Minecraft jars, `EnumFacing.getOpposite()` is obfuscated to `func_176734_d`. In development environments (after `rfg.deobf()`), it appears as `getOpposite`. LC-Core scans the Logistics Pipes bytecode at transform time to detect which name is in use and emits the matching call automatically — no environment-specific configuration required.
+> LC-Core registers a replacement connection handler, restoring the ability to route items and power across AP teleport pipes. Routing information is also correctly carried over when items arrive at the destination through teleportation, so they are properly re-routed if a destination is full or unreachable.
+>
+> **Supported:** Item teleport pipes · Power teleport pipes  
+> **Not supported:** Fluid teleport pipes — LP moves fluids as container items, which the fluid teleport pipe cannot carry.
 
 ---
 
