@@ -48,11 +48,11 @@ LP 0.10.4.28 broke the connection between Logistics Pipes routing pipes and Ende
 
 ### Additional Pipes
 
-AP 6.0.0.8 ships the power teleport pipe but never completes its item registration, making it impossible to obtain or place.
+AP 6.0.0.8 ships the power teleport pipe but never completes its implementation, making it impossible to craft, obtain, or use.
 
-**Power teleport pipe missing from the creative tab**
+**Power teleport pipe cannot be crafted and does not work**
 
-> The power teleport pipe behavior and texture exist in AP but the item is never registered with the game. Additionally, `PipeBehaviorTeleportPower.requestPower()` always returns 0 due to an incomplete upstream implementation, which prevents any energy from flowing through the pipe. LC-Core registers the missing item and replaces the behavior so the pipe both appears in the creative tab and actually teleports power.
+> The power teleport pipe exists in AP in name and texture only — the item is never registered, so it cannot be obtained from the creative tab or crafted. Even if spawned with commands, no energy ever flows through it. LC-Core registers the missing item, adds a crafting recipe (Items Teleport Pipe + Redstone Dust), and replaces the broken energy logic so the pipe appears in the AP creative tab, can be crafted normally, and actually teleports power between linked pipes without wasting energy.
 
 ---
 
