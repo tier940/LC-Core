@@ -85,27 +85,10 @@ jobs:
 #            tZiutdLG(required)
           curseforge-id: ${{ env.CURSEFORGE_PROJECT_ID }}
           curseforge-token: "${{ secrets.CURSEFORGE_API_KEY }}"
-#          curseforge-dependencies: |
-#            mixin-booter(required)
-#            gregtech-ce-unofficial(required)
-#            gregicality-multiblocks(required)
-#            implosionnobomb(recommended)
-#            ae2-extended-life(recommended)
-#            ae-additions-extra-cells-2-fork(recommended)
-#            nae2(recommended)
-#            ender-io-base(recommended)
-#            ender-io-machines(recommended)
-#            ender-io-endergy(recommended)
-#            ender-io-conduits(recommended)
-#            ender-io-ae2-conduits(recommended)
-#            gregtech-food-option(recommended)
-#            extracpus(recommended)
-#            draconic-evolution(recommended)
-#            draconicadditions(recommended)
-#            project-red-illumination(recommended)
-#            avaritia-1-1x-unofficial(recommended)
-#            thaumcraft(recommended)
-#            ulv-covers(incompatible)
+          curseforge-dependencies: |
+            bc-remastered(required)
+            logistics-pipes(required)
+            additional-pipes-for-buildcraft(required)
           files: |
             build/libs/!(*-@(dev|sources|javadoc)).jar
             build/libs/*-@(sources).jar
