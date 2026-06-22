@@ -52,9 +52,9 @@ public class AdditionalPipesTeleportConnection implements ISpecialPipedConnectio
 
     @Override
     public List<ConnectionInformation> getConnections(
-            IPipeInformationProvider startPipe,
-            EnumSet<PipeRoutingConnectionType> connection,
-            EnumFacing side) {
+                                                      IPipeInformationProvider startPipe,
+                                                      EnumSet<PipeRoutingConnectionType> connection,
+                                                      EnumFacing side) {
         List<ConnectionInformation> result = new ArrayList<>();
 
         TeleportManagerBase manager = TeleportManagerBase.INSTANCE;
@@ -65,7 +65,7 @@ public class AdditionalPipesTeleportConnection implements ISpecialPipedConnectio
         BlockPos pos = new BlockPos(startPipe.getX(), startPipe.getY(), startPipe.getZ());
 
         // side == null is PathFinder's initial "scan all directions" call.
-        EnumFacing[] facesToCheck = (side != null) ? new EnumFacing[]{side} : EnumFacing.VALUES;
+        EnumFacing[] facesToCheck = (side != null) ? new EnumFacing[] { side } : EnumFacing.VALUES;
 
         for (EnumFacing face : facesToCheck) {
             TileEntity adjacentTile = world.getTileEntity(pos.offset(face));
