@@ -13,7 +13,6 @@ import net.minecraft.world.World;
 
 import buildcraft.additionalpipes.api.ITeleportPipe;
 import buildcraft.additionalpipes.api.TeleportManagerBase;
-import buildcraft.additionalpipes.api.TeleportPipeType;
 import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.PipeBehaviour;
 import buildcraft.transport.tile.TilePipeHolder;
@@ -161,10 +160,7 @@ public class AdditionalPipesTeleportConnection implements ISpecialPipedConnectio
     }
 
     private boolean isSupportedTeleportPipe(TileEntity tile) {
-        ITeleportPipe tp = getTeleportPipe(tile);
-        if (tp == null) return false;
-        TeleportPipeType type = tp.getType();
-        return type == TeleportPipeType.ITEMS || type == TeleportPipeType.POWER;
+        return getTeleportPipe(tile) != null;
     }
 
     private ITeleportPipe getTeleportPipe(TileEntity tile) {

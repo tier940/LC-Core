@@ -1,0 +1,6 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "additionalpipes:pipes/pipe_power_teleport"
+    }
+}

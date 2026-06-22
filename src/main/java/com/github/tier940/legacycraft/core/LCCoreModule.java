@@ -1,5 +1,8 @@
 package com.github.tier940.legacycraft.core;
 
+import net.minecraft.item.Item;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLConstructionEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -14,6 +17,7 @@ import com.github.tier940.legacycraft.api.ModValues;
 import com.github.tier940.legacycraft.api.modules.IModule;
 import com.github.tier940.legacycraft.api.modules.TModule;
 import com.github.tier940.legacycraft.common.CommonProxy;
+import com.github.tier940.legacycraft.core.additionalpipes.PowerTeleportPipeFix;
 import com.github.tier940.legacycraft.core.logisticspipes.AdditionalPipesTeleportConnection;
 import com.github.tier940.legacycraft.modules.Modules;
 
@@ -44,8 +48,19 @@ public class LCCoreModule implements IModule {
     @Override
     public void preInit(FMLPreInitializationEvent event) {
         proxy.preInit(event);
+        PowerTeleportPipeFix.preInit(event, logger);
 
         logger.info("Hello World!");
+    }
+
+    @Override
+    public void registerItems(RegistryEvent.Register<Item> event) {
+        PowerTeleportPipeFix.registerItems(event, logger);
+    }
+
+    @Override
+    public void registerRecipesNormal(RegistryEvent.Register<IRecipe> event) {
+        PowerTeleportPipeFix.registerRecipes(event, logger);
     }
 
     @Override

@@ -7,13 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * * *
 
+## [1.2.0]
+
+### Added
+
+- **Power Teleport Pipe**
+    - The Additional Pipes Power Teleport Pipe can now be crafted placed in the world, and actually teleports power between linked pipes.
+    - The pipe was always part of Additional Pipes 6.0.0.8 in name only the item never existed and power never flowed even when obtained via commands.
+    - LC-Core completes the missing registration, adds a crafting recipe, and fixes the energy flow.
+
+- **Fluid teleport pipes in Logistics Pipes routing**
+    - Fluid Teleport Pipes are now recognised by the Logistics Pipes routing network.
+    - All three AP teleport pipe types are fully supported.
+
+* * *
+
 ## [1.1.1]
 
 ### Fixed
 
-- **Crash when placing a Logistics Pipe next to an Additional Pipes teleport pipe** — A missed edge
-  case in the 1.1.0 teleport pipe support could crash the game the moment an LP routing pipe was
-  placed beside a teleport pipe. The connection now sets up safely in all cases.
+- **Crash when placing a Logistics Pipe next to an AP teleport pipe**
+    - Placing an LP routing pipe immediately beside any AP teleport pipe no longer crashes the game.
 
 * * *
 
@@ -21,18 +35,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- **LogisticsPipes routing through Additional Pipes teleport pipes** — Items and power can
-  now be routed through AP teleport pipes inside a Logistics Pipes network. LP 0.10.4.28
-  silently removed its built-in connection handler for AP teleport pipes, which caused LP to
-  be completely unaware of routes that cross a teleportation boundary — providers on the far
-  side of a teleport pipe became invisible to requesters, and items sent toward a full or
-  missing destination were lost instead of being returned.
-  LC-Core now registers the missing bridge itself, restoring full provider/requester
-  visibility and proper re-routing when a destination cannot be reached.
-  ([RS485/LogisticsPipes#348](https://github.com/RS485/LogisticsPipes/issues/348))
-
-  > **Note:** Fluid teleport pipes are intentionally not supported. LP transports fluids
-  > as FluidContainer items, which the fluid teleport pipe is not designed to carry.
+- **Logistics Pipes could not route through Additional Pipes teleport pipes**
+    - Items and power routed through a Logistics Pipes network now correctly cross teleport pipe boundaries.
+    - Providers on the far side of a teleport pipe are visible to requesters, and items are properly returned if a destination is full or missing.
+    - ([RS485/LogisticsPipes#348](https://github.com/RS485/LogisticsPipes/issues/348))
 
 ### Changed
 

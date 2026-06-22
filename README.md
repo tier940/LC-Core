@@ -46,6 +46,16 @@ LP 0.10.4.28 broke the connection between Logistics Pipes routing pipes and Ende
 
 ---
 
+### Additional Pipes
+
+AP 6.0.0.8 ships the power teleport pipe but never completes its item registration, making it impossible to obtain or place.
+
+**Power teleport pipe missing from the creative tab**
+
+> The power teleport pipe behavior and texture exist in AP but the item is never registered with the game. Additionally, `PipeBehaviorTeleportPower.requestPower()` always returns 0 due to an incomplete upstream implementation, which prevents any energy from flowing through the pipe. LC-Core registers the missing item and replaces the behavior so the pipe both appears in the creative tab and actually teleports power.
+
+---
+
 ### Logistics Pipes + Additional Pipes
 
 LP 0.10.4.28 removed its built-in support for routing through Additional Pipes teleport pipes, making anything on the other side of a teleport pipe effectively unreachable.
@@ -54,10 +64,9 @@ LP 0.10.4.28 removed its built-in support for routing through Additional Pipes t
 
 > After the LP update, the routing network has no awareness of teleport pipe connections. Providers placed beyond a teleport pipe become invisible to requesters, and items sent toward a full or missing destination are lost rather than being returned.
 >
-> LC-Core registers a replacement connection handler, restoring the ability to route items and power across AP teleport pipes. Routing information is also correctly carried over when items arrive at the destination through teleportation, so they are properly re-routed if a destination is full or unreachable.
+> LC-Core registers a replacement connection handler, restoring the ability to route items, fluids, and power across AP teleport pipes. Routing information is also correctly carried over when items arrive at the destination through teleportation, so they are properly re-routed if a destination is full or unreachable.
 >
-> **Supported:** Item teleport pipes · Power teleport pipes  
-> **Not supported:** Fluid teleport pipes — LP moves fluids as container items, which the fluid teleport pipe cannot carry.
+> **Supported:** Item teleport pipes · Fluid teleport pipes · Power teleport pipes
 
 ---
 
