@@ -37,11 +37,9 @@ public class AdditionalPipesTeleportConnection implements ISpecialPipedConnectio
         return TeleportManagerBase.INSTANCE != null;
     }
 
-    // ── ISpecialPipedConnection ──────────────────────────────────────────────
-
     @Override
     public boolean isType(IPipeInformationProvider startPipe) {
-        World world = startPipe.getWorld();
+        World world = getWorld(startPipe);
         if (world == null) return false;
         BlockPos pos = new BlockPos(startPipe.getX(), startPipe.getY(), startPipe.getZ());
         for (EnumFacing side : EnumFacing.VALUES) {
@@ -60,7 +58,7 @@ public class AdditionalPipesTeleportConnection implements ISpecialPipedConnectio
         TeleportManagerBase manager = TeleportManagerBase.INSTANCE;
         if (manager == null) return result;
 
-        World world = startPipe.getWorld();
+        World world = getWorld(startPipe);
         if (world == null) return result;
         BlockPos pos = new BlockPos(startPipe.getX(), startPipe.getY(), startPipe.getZ());
 
@@ -106,8 +104,6 @@ public class AdditionalPipesTeleportConnection implements ISpecialPipedConnectio
 
         return result;
     }
-
-    // ── ISpecialTileConnection ───────────────────────────────────────────────
 
     @Override
     public boolean isType(TileEntity tile) {
@@ -156,7 +152,13 @@ public class AdditionalPipesTeleportConnection implements ISpecialPipedConnectio
         }
     }
 
-    // ── helpers ─────────────────────────────────────────────────────────────
+    // LogisticsTileGenericPipe declares IPipeInformationProvider but does not implement
+    // its getWorld() — calling it directly throws AbstractMethodError. Resolve the world
+    // through the underlying TileEntity instead, which always implements MC's getWorld().
+    private World getWorld(IPipeInformationProvider startPipe) {
+        TileEntity tile = startPipe.getTile();
+        return tile != null ? tile.getWorld() : null;
+    }
 
     private boolean isSupportedTeleportPipe(TileEntity tile) {
         ITeleportPipe tp = getTeleportPipe(tile);

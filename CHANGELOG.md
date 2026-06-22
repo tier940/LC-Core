@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * * *
 
+## [1.1.1]
+
+### Fixed
+
+- **Crash when placing a Logistics Pipe next to an Additional Pipes teleport pipe** — A missed edge
+  case in the 1.1.0 teleport pipe support could crash the game the moment an LP routing pipe was
+  placed beside a teleport pipe. The connection now sets up safely in all cases.
+
+* * *
+
 ## [1.1.0]
 
 ### Fixed
