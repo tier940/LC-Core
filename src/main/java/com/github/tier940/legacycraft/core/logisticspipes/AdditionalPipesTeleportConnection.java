@@ -112,15 +112,33 @@ public class AdditionalPipesTeleportConnection implements ISpecialPipedConnectio
     @Override
     public Collection<TileEntity> getConnections(TileEntity tile) {
         if (!isSupportedTeleportPipe(tile)) return Collections.emptyList();
-        TilePipeHolder holder = (TilePipeHolder) tile;
-        World world = holder.getWorld();
-        if (world == null) return Collections.emptyList();
-        BlockPos pos = holder.getPos();
+        ITeleportPipe sourceTeleport = getTeleportPipe(tile);
+        if (sourceTeleport == null) return Collections.emptyList();
+
+        TeleportManagerBase manager = TeleportManagerBase.INSTANCE;
+        if (manager == null) return Collections.emptyList();
+
+        List<ITeleportPipe> destinations;
+        if (sourceTeleport.canSend()) {
+            destinations = manager.getConnectedPipes(sourceTeleport, false, true);
+        } else if (sourceTeleport.canReceive()) {
+            destinations = manager.getConnectedPipes(sourceTeleport, true, false);
+        } else {
+            return Collections.emptyList();
+        }
+
         List<TileEntity> result = new ArrayList<>();
-        for (EnumFacing face : EnumFacing.VALUES) {
-            TileEntity neighbor = world.getTileEntity(pos.offset(face));
-            if (neighbor instanceof LogisticsTileGenericPipe) {
-                result.add(neighbor);
+        for (ITeleportPipe dest : destinations) {
+            TilePipeHolder destHolder = dest.getContainer();
+            if (destHolder == null || destHolder.isInvalid()) continue;
+            World destWorld = destHolder.getWorld();
+            if (destWorld == null) continue;
+            BlockPos destPos = destHolder.getPos();
+            for (EnumFacing face : EnumFacing.VALUES) {
+                TileEntity neighbor = destWorld.getTileEntity(destPos.offset(face));
+                if (neighbor instanceof LogisticsTileGenericPipe) {
+                    result.add(neighbor);
+                }
             }
         }
         return result;

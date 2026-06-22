@@ -5,6 +5,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLConstructionEvent;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
@@ -52,6 +53,9 @@ public class LCCoreModule implements IModule {
 
         logger.info("Hello World!");
     }
+
+    @Override
+    public void init(FMLInitializationEvent event) {}
 
     @Override
     public void registerItems(RegistryEvent.Register<Item> event) {

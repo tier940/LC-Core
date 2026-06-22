@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * * *
 
+## [1.2.1]
+
+### Fixed
+
+- **Power Teleport Pipe appeared as a missing-texture item in the inventory**
+    - The item now correctly displays its pipe texture.
+
+- **Power Teleport Pipe: energy flowed backwards into the network when the receiver faced up or down**
+    - When a receiver pipe had a kinesis pipe connected on the same face used for injection, BuildCraft routed the incoming energy back into the network instead of keeping it at the receiver.
+    - All orientations, including upward and downward connections, now receive energy correctly.
+
+- **Logistics Pipes could not route through AP teleport pipes unless an LP pipe was placed directly next to the teleport pipe**
+    - The routing connection previously only checked blocks immediately adjacent to the teleport pipe itself.
+    - It now follows the teleport link to the remote end and discovers LP pipes connected there, so Logistics Pipes networks work correctly across any teleport pipe placement.
+
+### Changed
+
+- **Power Teleport Pipe item name no longer shows "[WIP]"**
+
+* * *
+
 ## [1.2.0]
 
 ### Added

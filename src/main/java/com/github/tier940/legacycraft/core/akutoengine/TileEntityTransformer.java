@@ -51,10 +51,7 @@ public class TileEntityTransformer implements IClassTransformer {
                                                 String iDesc,
                                                 boolean itf) {
                         if (opcode == Opcodes.INVOKEVIRTUAL && METHOD.equals(iName) && OLD_DESC.equals(iDesc)) {
-                            // Stack before: ..., this, tileEntity, enumFacing
-                            // SWAP: ..., this, enumFacing, tileEntity
                             super.visitInsn(Opcodes.SWAP);
-                            // POP: ..., this, enumFacing
                             super.visitInsn(Opcodes.POP);
                             super.visitMethodInsn(opcode, ENGINE_BASE, iName, NEW_DESC, itf);
                             LOGGER.info("Patched getReceiverToPower call in {} (dropped TileEntity arg)", mName);

@@ -4,9 +4,12 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import org.apache.logging.log4j.Logger;
@@ -15,6 +18,7 @@ import buildcraft.additionalpipes.APPipeDefintions;
 import buildcraft.additionalpipes.AdditionalPipes;
 import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pipe.PipeDefinition;
+import buildcraft.lib.item.IItemBuildCraft;
 import buildcraft.transport.item.ItemPipeHolder;
 
 // AP 6.0.0.8 omits powerTeleportPipeDef registration entirely. preInit() calls define()
@@ -62,6 +66,17 @@ public class PowerTeleportPipeFix {
             logger.info("Registered missing AP power teleport pipe item");
         } catch (Exception e) {
             logger.error("Failed to register AP power teleport pipe item", e);
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void registerModels(ModelRegistryEvent event, Logger logger) {
+        if (APPipeDefintions.powerTeleportPipeItem == null) return;
+        try {
+            ((IItemBuildCraft) APPipeDefintions.powerTeleportPipeItem).registerVariants();
+            logger.info("Registered AP power teleport pipe item model variants");
+        } catch (Exception e) {
+            logger.error("Failed to register AP power teleport pipe item model variants", e);
         }
     }
 
