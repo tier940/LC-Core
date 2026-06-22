@@ -23,7 +23,7 @@ import com.github.tier940.legacycraft.modules.Modules;
      modid = Tags.MODID,
      name = Tags.MODNAME,
      version = Tags.VERSION,
-     dependencies = "")
+     dependencies = "after:logisticspipes;after:additionalpipes")
 public class LegacyCraftMod {
 
     private ModuleManager moduleManager;

@@ -46,7 +46,7 @@ dependencies {
     implementation ("codechicken:codechickenlib:3.2.3.358") {
         transitive = false
     } // CCL 3.2.3.358
-    //implementation rfg.deobf("curse.maven:logistics-pipes-232838:4000858") // Logistics Pipes 0.10.4.27
-    //implementation rfg.deobf("curse.maven:logistics-pipes-232838:4007175") // Logistics Pipes 0.10.4.28
     implementation rfg.deobf("curse.maven:logistics-pipes-232838:4849512") // Logistics Pipes 0.10.4.49
+
+    implementation rfg.deobf("curse.maven:additional-pipes-for-buildcraft-302569:2615327") // Additional Pipes 6.0.0.8
 }
