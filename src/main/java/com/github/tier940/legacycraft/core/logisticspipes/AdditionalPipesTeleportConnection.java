@@ -28,21 +28,38 @@ import logisticspipes.routing.PipeRoutingConnectionType;
 import logisticspipes.routing.pathfinder.IPipeInformationProvider;
 import logisticspipes.utils.item.ItemIdentifierStack;
 
-// Bridges LP routing pathfinder with AP teleport pipes (Issue RS485/LogisticsPipes#348).
+/**
+ * Bridges the Logistics Pipes routing pathfinder with Additional Pipes teleport pipes.
+ *
+ * <p>
+ * Without this handler, LP's pathfinder treats a teleport pipe as a dead-end because it has
+ * no physical neighbour on the remote side. This class implements {@link ISpecialPipedConnection}
+ * and {@link ISpecialTileConnection} so LP follows the teleport link to the remote end and
+ * discovers LP pipes connected there. Fixes RS485/LogisticsPipes#348.
+ */
 public class AdditionalPipesTeleportConnection implements ISpecialPipedConnection, ISpecialTileConnection {
 
+    // Weight assigned to each teleport hop in LP's routing tree; 1.0 treats it as one pipe segment.
+    // Raise this value to bias routing toward physical pipe paths when cheaper alternatives exist.
+    private static final double TELEPORT_EDGE_WEIGHT = 1.0;
+
+    // TeleportManagerBase.INSTANCE is null when Additional Pipes is absent or failed to load;
+    // returning false causes the caller to skip registration of this handler entirely.
     @Override
     public boolean init() {
         return TeleportManagerBase.INSTANCE != null;
     }
 
+    // Called by LP's pathfinder to decide whether to ask getConnections() for this pipe.
+    // Returns true if ANY adjacent tile is a teleport pipe, not just the one on `side`,
+    // because LP does not pass a side to this overload.
     @Override
     public boolean isType(IPipeInformationProvider startPipe) {
         World world = getWorld(startPipe);
         if (world == null) return false;
         BlockPos pos = new BlockPos(startPipe.getX(), startPipe.getY(), startPipe.getZ());
         for (EnumFacing side : EnumFacing.VALUES) {
-            if (isSupportedTeleportPipe(world.getTileEntity(pos.offset(side)))) return true;
+            if (isTeleportPipe(world.getTileEntity(pos.offset(side)))) return true;
         }
         return false;
     }
@@ -61,16 +78,20 @@ public class AdditionalPipesTeleportConnection implements ISpecialPipedConnectio
         if (world == null) return result;
         BlockPos pos = new BlockPos(startPipe.getX(), startPipe.getY(), startPipe.getZ());
 
-        // side == null is PathFinder's initial "scan all directions" call.
+        // LP calls getConnections() twice: once with side == null during the initial fan-out
+        // (scan every face) and again with a specific side during directed traversal. When a
+        // specific side is given we only need to inspect that face's adjacent tile.
         EnumFacing[] facesToCheck = (side != null) ? new EnumFacing[] { side } : EnumFacing.VALUES;
 
         for (EnumFacing face : facesToCheck) {
             TileEntity adjacentTile = world.getTileEntity(pos.offset(face));
-            if (!isSupportedTeleportPipe(adjacentTile)) continue;
+            if (!isTeleportPipe(adjacentTile)) continue;
             ITeleportPipe sourceTeleport = getTeleportPipe(adjacentTile);
 
-            // getConnectedPipes(pipe, includeSend, includeReceive):
-            // From a send-end, find receive-capable peers; from a receive-end, find send-capable peers.
+            // getConnectedPipes(pipe, includeSend, includeReceive): when the local pipe is a
+            // send-end we want the receive-end peers (includeSend=false, includeReceive=true),
+            // and vice-versa. A pipe that can neither send nor receive is a standalone stub;
+            // skip it rather than returning an empty list that pollutes the routing table.
             List<ITeleportPipe> destinations;
             if (sourceTeleport.canSend()) {
                 destinations = manager.getConnectedPipes(sourceTeleport, false, true);
@@ -81,21 +102,27 @@ public class AdditionalPipesTeleportConnection implements ISpecialPipedConnectio
             }
 
             for (ITeleportPipe dest : destinations) {
-                TilePipeHolder destContainer = dest.getContainer();
-                if (destContainer == null || destContainer.isInvalid()) continue;
+                TilePipeHolder remoteHolder = dest.getContainer();
+                if (remoteHolder == null || remoteHolder.isInvalid()) continue;
 
-                World destWorld = destContainer.getWorld();
-                if (destWorld == null) continue;
+                World remoteWorld = remoteHolder.getWorld();
+                if (remoteWorld == null) continue;
+                // Only expose LP routing pipes, not ordinary BC pipes or other tiles.
+                // ConnectionInformation args: provider, connectionTypes, incomingSide (the side
+                // the LP pipe sees this connection arrive on = exitSide.getOpposite()), the
+                // face on the *origin* LP pipe where the teleport is attached, and edge weight.
+                // Weight 1.0 treats the teleport hop as one pipe segment; raise it to bias
+                // routing away from teleports when cheaper physical paths exist.
                 for (EnumFacing exitSide : EnumFacing.VALUES) {
-                    BlockPos neighborPos = destContainer.getPos().offset(exitSide);
-                    TileEntity neighbor = destWorld.getTileEntity(neighborPos);
+                    BlockPos neighborPos = remoteHolder.getPos().offset(exitSide);
+                    TileEntity neighbor = remoteWorld.getTileEntity(neighborPos);
                     if (neighbor == null) continue;
 
                     IPipeInformationProvider provider = SimpleServiceLocator.pipeInformationManager
                             .getInformationProviderFor(neighbor);
                     if (provider != null && provider.isRoutingPipe()) {
                         result.add(new ConnectionInformation(
-                                provider, connection, exitSide.getOpposite(), face, 1.0));
+                                provider, connection, exitSide.getOpposite(), face, TELEPORT_EDGE_WEIGHT));
                     }
                 }
             }
@@ -104,16 +131,21 @@ public class AdditionalPipesTeleportConnection implements ISpecialPipedConnectio
         return result;
     }
 
+    // ISpecialTileConnection overload: LP calls this to decide whether to delegate tile
+    // connections to getConnections(TileEntity). Returns true if the tile IS a teleport
+    // pipe (not an LP pipe adjacent to one, as in the IPipeInformationProvider overload).
     @Override
     public boolean isType(TileEntity tile) {
-        return isSupportedTeleportPipe(tile);
+        return isTeleportPipe(tile);
     }
 
+    // ISpecialTileConnection path: LP calls this when it needs to discover LP tiles reachable
+    // from a teleport pipe tile. Returns LogisticsTileGenericPipe neighbours at the remote
+    // end(s) so LP can fold them into its tile-neighbour graph without needing a physical edge.
     @Override
     public Collection<TileEntity> getConnections(TileEntity tile) {
-        if (!isSupportedTeleportPipe(tile)) return Collections.emptyList();
+        if (!isTeleportPipe(tile)) return Collections.emptyList();
         ITeleportPipe sourceTeleport = getTeleportPipe(tile);
-        if (sourceTeleport == null) return Collections.emptyList();
 
         TeleportManagerBase manager = TeleportManagerBase.INSTANCE;
         if (manager == null) return Collections.emptyList();
@@ -129,13 +161,13 @@ public class AdditionalPipesTeleportConnection implements ISpecialPipedConnectio
 
         List<TileEntity> result = new ArrayList<>();
         for (ITeleportPipe dest : destinations) {
-            TilePipeHolder destHolder = dest.getContainer();
-            if (destHolder == null || destHolder.isInvalid()) continue;
-            World destWorld = destHolder.getWorld();
-            if (destWorld == null) continue;
-            BlockPos destPos = destHolder.getPos();
+            TilePipeHolder remoteHolder = dest.getContainer();
+            if (remoteHolder == null || remoteHolder.isInvalid()) continue;
+            World remoteWorld = remoteHolder.getWorld();
+            if (remoteWorld == null) continue;
+            BlockPos remotePos = remoteHolder.getPos();
             for (EnumFacing face : EnumFacing.VALUES) {
-                TileEntity neighbor = destWorld.getTileEntity(destPos.offset(face));
+                TileEntity neighbor = remoteWorld.getTileEntity(remotePos.offset(face));
                 if (neighbor instanceof LogisticsTileGenericPipe) {
                     result.add(neighbor);
                 }
@@ -144,11 +176,19 @@ public class AdditionalPipesTeleportConnection implements ISpecialPipedConnectio
         return result;
     }
 
+    // Returning true tells LP that items routed through this special connection must pass
+    // routing information to the receiving pipe via transmit(). Without this, LP would
+    // hand off the physical item but lose the routing metadata (destination, priority, etc.),
+    // causing items to be stuck or mis-routed at the remote end.
     @Override
     public boolean needsInformationTransition() {
         return true;
     }
 
+    // Called by LP after physical item delivery to copy routing metadata from the outgoing
+    // IRoutedItem onto the receiving CoreRoutedPipe via queueUnroutedItemInformation().
+    // `tile` is the remote TilePipeHolder (the AP teleport pipe at the destination end);
+    // we scan its neighbours for the LP pipe that will actually process the item.
     @Override
     public void transmit(TileEntity tile, IRoutedItem data) {
         if (!(tile instanceof TilePipeHolder)) return;
@@ -160,12 +200,13 @@ public class AdditionalPipesTeleportConnection implements ISpecialPipedConnectio
             TileEntity neighbor = world.getTileEntity(pos.offset(face));
             if (!(neighbor instanceof LogisticsTileGenericPipe)) continue;
             CoreUnroutedPipe unrouted = ((LogisticsTileGenericPipe) neighbor).pipe;
-            if (unrouted instanceof CoreRoutedPipe) {
-                ((CoreRoutedPipe) unrouted).queueUnroutedItemInformation(
-                        new ItemIdentifierStack(data.getItemIdentifierStack()),
-                        data.getInfo());
-                return;
-            }
+            if (!(unrouted instanceof CoreRoutedPipe)) continue;
+            // Copy-construct ItemIdentifierStack so the queued entry is independent of the
+            // IRoutedItem's mutable stack; queueUnroutedItemInformation stores a reference.
+            ((CoreRoutedPipe) unrouted).queueUnroutedItemInformation(
+                    new ItemIdentifierStack(data.getItemIdentifierStack()),
+                    data.getInfo());
+            return; // Stop at the first routed LP pipe found; a teleport pipe has at most one.
         }
     }
 
@@ -177,10 +218,15 @@ public class AdditionalPipesTeleportConnection implements ISpecialPipedConnectio
         return tile != null ? tile.getWorld() : null;
     }
 
-    private boolean isSupportedTeleportPipe(TileEntity tile) {
+    // Delegates to getTeleportPipe() so the null check is defined in one place.
+    private boolean isTeleportPipe(TileEntity tile) {
         return getTeleportPipe(tile) != null;
     }
 
+    // AP teleport pipes are BCR PipeBehaviour objects, not TileEntities: the TileEntity is the
+    // BCR generic TilePipeHolder and the actual pipe logic lives in its PipeBehaviour. Both
+    // ITeleportPipe and ISpecialPipedConnection expect a TileEntity, so we unwrap through the
+    // holder → IPipe → PipeBehaviour chain to reach the AP-specific ITeleportPipe interface.
     private ITeleportPipe getTeleportPipe(TileEntity tile) {
         if (!(tile instanceof TilePipeHolder)) return null;
         IPipe pipe = ((TilePipeHolder) tile).getPipe();

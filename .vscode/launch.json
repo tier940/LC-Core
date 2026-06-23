@@ -1,0 +1,91 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node-terminal",
+      "name": "1. Setup Workspace",
+      "request": "launch",
+      "command": "./gradlew setupDecompWorkspace; exit",
+      "windows": { "command": "gradlew.bat setupDecompWorkspace" },
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "node-terminal",
+      "name": "2. Run Client",
+      "request": "launch",
+      "command": "./gradlew runClient; exit",
+      "windows": { "command": "gradlew.bat runClient" },
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "node-terminal",
+      "name": "3. Run Server",
+      "request": "launch",
+      "command": "./gradlew runServer; exit",
+      "windows": { "command": "gradlew.bat runServer" },
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "node-terminal",
+      "name": "4. Run Obfuscated Client",
+      "request": "launch",
+      "command": "./gradlew runObfClient; exit",
+      "windows": { "command": "gradlew.bat runObfClient" },
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "node-terminal",
+      "name": "5. Run Obfuscated Server",
+      "request": "launch",
+      "command": "./gradlew runObfServer; exit",
+      "windows": { "command": "gradlew.bat runObfServer" },
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "node-terminal",
+      "name": "6. Apply Spotless",
+      "request": "launch",
+      "command": "./gradlew spotlessApply; exit",
+      "windows": { "command": "gradlew.bat spotlessApply" },
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "node-terminal",
+      "name": "7. Build Jars",
+      "request": "launch",
+      "command": "./gradlew build; exit",
+      "windows": { "command": "gradlew.bat build" },
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "node-terminal",
+      "name": "Update Buildscript",
+      "request": "launch",
+      "command": "./gradlew updateBuildScript; exit",
+      "windows": { "command": "gradlew.bat updateBuildScript" },
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "node-terminal",
+      "name": "FAQ",
+      "request": "launch",
+      "command": "./gradlew faq; exit",
+      "windows": { "command": "gradlew.bat faq" },
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "java",
+      "name": "Attach to Client",
+      "request": "attach",
+      "hostName": "localhost",
+      "port": 5005
+    },
+    {
+      "type": "java",
+      "name": "Attach to Server",
+      "request": "attach",
+      "hostName": "localhost",
+      "port": 5006
+    }
+  ]
+}

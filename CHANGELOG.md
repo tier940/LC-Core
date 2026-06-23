@@ -5,6 +5,19 @@ All notable changes to LC-Core are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.2]
+
+### Fixed
+
+- **Item Teleport Pipe: game crashed when the receiver pipe was connected on both ends (straight-pipe layout)**
+    - Placing the receiver in a line (e.g. pipes coming from the north and leaving to the south) caused an immediate crash when items arrived.
+    - Items now arrive correctly regardless of how the receiver pipe is oriented.
+
+- **Fluid Teleport Pipe: fluids backed up when multiple sender pipes shared the same channel**
+    - With two or more senders on the same channel, each sender tried to push the full tank capacity at once. All but one would fail, stalling the pipes behind them.
+    - Senders now split the available capacity evenly, so all of them can transfer fluids at the same time without blocking each other.
+
+
 * * *
 
 ## [1.2.1]

@@ -1,0 +1,17 @@
+{
+  "gradle.nestedProjects": false,
+  "java.gradle.buildServer.enabled": "on",
+  "java.compile.nullAnalysis.mode": "automatic",
+  "files.watcherExclude": {
+    "**/build/**": true,
+    "**/.gradle/**": true
+  },
+  "search.exclude": {
+    "**/build": true,
+    "**/.gradle": true
+  },
+  "files.exclude": {
+    "**/build": true,
+    "**/.gradle": true
+  }
+}

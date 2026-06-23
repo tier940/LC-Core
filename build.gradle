@@ -727,8 +727,8 @@ jar {
 
     // Add all embedded dependencies into the jar
     from provider {
-        configurations.embed.collect {
-            it.isDirectory() ? it : zipTree(it)
+        configurations.embed.collect { dep ->
+            dep.isDirectory() ? dep : zipTree(dep)
         }
     }
 
@@ -807,7 +807,7 @@ if (usesShadowedDependencies.toBoolean()) {
         finalizedBy(tasks.shadowJar)
     }
     tasks.named('reobfJar', ReobfuscatedJar) {
-        inputJar.set(tasks.named('shadowJar', ShadowJar).flatMap({it.archiveFile}))
+        inputJar.set(tasks.named('shadowJar', ShadowJar).flatMap({ jar -> jar.archiveFile }))
     }
     AdhocComponentWithVariants javaComponent = (AdhocComponentWithVariants) project.components.findByName('java')
     javaComponent.withVariantsFromConfiguration(configurations.shadowRuntimeElements) {
@@ -896,8 +896,8 @@ idea {
                 afterEvaluate {
                     javacAdditionalOptions = '-encoding utf8'
                     moduleJavacAdditionalOptions = [
-                            (project.name + '.main'): tasks.compileJava.options.compilerArgs.collect {
-                                '"' + it + '"'
+                            (project.name + '.main'): tasks.compileJava.options.compilerArgs.collect { arg ->
+                                '"' + arg + '"'
                             }.join(' ')
                     ]
                 }
@@ -943,7 +943,8 @@ tasks.register('generateChangelog') {
                 .collect { ['--', it] }).flatten())
 
         if (changelog) {
-            changelog = "Changes since ${lastTag}:\n${{("\n" + changelog).replaceAll("\n", "\n* ")}}"
+            def changelogFormatted = ("\n" + changelog).replaceAll("\n", "\n* ")
+            changelog = "Changes since ${lastTag}:\n${changelogFormatted}"
         }
         def f = getFile('build/changelog.md')
         changelog = changelog ?: 'There have been no changes.'
@@ -1200,8 +1201,8 @@ boolean performBuildScriptUpdate() {
     if (isNewBuildScriptVersionAvailable()) {
         def buildscriptFile = getFile("build.gradle")
         def settingsFile = getFile("settings.gradle")
-        availableBuildScriptUrl().withInputStream { i -> buildscriptFile.withOutputStream { it << i } }
-        availableSettingsGradleUrl().withInputStream { i -> settingsFile.withOutputStream { it << i } }
+        availableBuildScriptUrl().withInputStream { i -> buildscriptFile.withOutputStream { os -> os << i } }
+        availableSettingsGradleUrl().withInputStream { i -> settingsFile.withOutputStream { os -> os << i } }
         def out = services.get(StyledTextOutputFactory).create('buildscript-update-output')
         out.style(Style.Success).print("Build script updated. Please REIMPORT the project or RESTART your IDE!")
         return true
