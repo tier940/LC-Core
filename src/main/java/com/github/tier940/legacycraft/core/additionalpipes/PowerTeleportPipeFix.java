@@ -72,7 +72,12 @@ public class PowerTeleportPipeFix {
             // preInit runs (mod dependency order guarantees AP preInit completes first), but
             // guard anyway in case AP itself encountered an initialisation failure.
             if (AdditionalPipes.instance != null && AdditionalPipes.instance.creativeTab != null) {
-                item.setCreativeTab(AdditionalPipes.instance.creativeTab);
+                try {
+                    item.setCreativeTab(AdditionalPipes.instance.creativeTab);
+                } catch (NoSuchMethodError ignored) {
+                    // Cleanroom changes Item.setCreativeTab return type from Item to void;
+                    // the compiled descriptor mismatches at runtime. Creative tab is cosmetic only.
+                }
             }
 
             APPipeDefintions.powerTeleportPipeDef = def;

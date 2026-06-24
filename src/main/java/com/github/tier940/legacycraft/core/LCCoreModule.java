@@ -2,6 +2,7 @@ package com.github.tier940.legacycraft.core;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLConstructionEvent;
@@ -21,6 +22,7 @@ import com.github.tier940.legacycraft.common.CommonProxy;
 import com.github.tier940.legacycraft.core.additionalpipes.PowerTeleportPipeFix;
 import com.github.tier940.legacycraft.core.additionalpipes.TeleportPipeBehaviorFix;
 import com.github.tier940.legacycraft.core.logisticspipes.AdditionalPipesTeleportConnection;
+import com.github.tier940.legacycraft.core.logisticspipes.TeleportPipeConnectionNotifier;
 import com.github.tier940.legacycraft.modules.Modules;
 
 import logisticspipes.proxy.SimpleServiceLocator;
@@ -96,6 +98,7 @@ public class LCCoreModule implements IModule {
     @Override
     public void postInit(FMLPostInitializationEvent event) {
         registerAdditionalPipesTeleportConnection();
+        MinecraftForge.EVENT_BUS.register(new TeleportPipeConnectionNotifier());
     }
 
     private void registerAdditionalPipesTeleportConnection() {
@@ -110,15 +113,8 @@ public class LCCoreModule implements IModule {
             logger.info("Additional Pipes not detected — skipping teleport pipe connection handler");
             return;
         }
+        // ISpecialPipedConnection only; also registering ISpecialTileConnection double-counts routes.
         SimpleServiceLocator.specialpipeconnection.registerHandler(handler);
-
-        // specialtileconnection was added in LP 0.10.x mid-cycle; older LP builds lack the field
-        // entirely and set it to null in SimpleServiceLocator's static initializer. Registering
-        // handler here as an ISpecialTileConnection lets LP resolve the remote TileEntity during
-        // routing tree construction, not just pipe-to-pipe connections.
-        if (SimpleServiceLocator.specialtileconnection != null) {
-            SimpleServiceLocator.specialtileconnection.registerHandler(handler);
-        }
         logger.info("Registered Additional Pipes teleport connection handler (fix for RS485/LogisticsPipes#348)");
     }
 }

@@ -1,0 +1,13 @@
+{
+  "package": "com.github.tier940.legacycraft.mixins.logisticspipes",
+  "refmap": "mixins.legacycraft.refmap.json",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.8",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinModuleProviderBoost",
+    "MixinPipeTransportLogistics"
+  ],
+  "client": [],
+  "server": []
+}

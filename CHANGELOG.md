@@ -5,6 +5,27 @@ All notable changes to LC-Core are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.3]
+
+### Fixed
+
+- **AP teleport pipes took up to 30 seconds to start working after placement**
+    - Placing an AP teleport pipe next to an LP routing pipe, or changing the teleport frequency, now takes effect almost immediately instead of after a delay of up to 30 seconds.
+
+- **Game crashed on startup**
+    - A crash that could occur during startup in certain environments has been fixed. The Power Teleport Pipe may not appear in the creative tab in some environments, but works correctly in all other respects.
+
+- **Logistics Pipes can request items through an item teleport pipe**
+    - A Request Pipe or Request Table reaches providers on the far side of an item teleport pipe. When several teleport pipes share a channel, duplicate remote pipes are suppressed so requests do not over-dispatch.
+
+- **Items no longer dribble out one stack per tick when sent through an item teleport pipe**
+    - A Provider Pipe placed next to an item teleport pipe now dispatches the full requested amount in one tick instead of one stack per tick. Without the teleport, the per-tick throttle was masked by transport delay; with the teleport each stack arrived instantly at the destination, making the chunking visible.
+
+- **Items teleported over a 1-to-many channel no longer scatter across receivers, vanish on the ground, or fixate on the wrong destination**
+    - When several receivers shared the same channel, each transported item picked a receiver at random — splitting a single request across multiple destinations and, if no receiver had a pipe attached, dropping the item on the floor. Items now route to the receiver whose adjacent Logistics Pipes graph has the shortest routing distance to the requested destination router, so a request to Request Pipe B is delivered to the receiver that actually neighbours Router B, even when Router A and Router B happen to be near the same teleport receiver. When no receiver is reachable at all, the item is consumed cleanly instead of being dropped.
+
+* * *
+
 ## [1.2.2]
 
 ### Fixed

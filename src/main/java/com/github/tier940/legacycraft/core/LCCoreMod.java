@@ -29,9 +29,7 @@ public class LCCoreMod implements IFMLLoadingPlugin {
                 // Drops the removed EnumGateModifier arg from GateVariant's constructor.
                 TRANSFORMER_PACKAGE + ".akutoengine.ObjHandlerTransformer",
                 // Drops the removed TileEntity arg from getReceiverToPower().
-                TRANSFORMER_PACKAGE + ".akutoengine.TileEntityTransformer",
-                // Restores energy/IC2/EnderIO connectivity checks removed in LP 0.10.4.28+.
-                TRANSFORMER_PACKAGE + ".logisticspipes.PipeTransportTransformer"
+                TRANSFORMER_PACKAGE + ".akutoengine.TileEntityTransformer"
         };
     }
 

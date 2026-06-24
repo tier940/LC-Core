@@ -42,11 +42,34 @@ dependencies {
     implementation rfg.deobf("curse.maven:bc-remastered-892913:7807853") // BC remastered 8.0.11
     implementation rfg.deobf("curse.maven:akutolib-304964:3097735") // AkutoLib 3.0.1
     implementation rfg.deobf("curse.maven:akuto-engine-278276:3532353") // Akuto Engine 2.0.13
+    implementation rfg.deobf("curse.maven:additional-pipes-for-buildcraft-302569:2615327") // Additional Pipes 6.0.0.8
 
     implementation ("codechicken:codechickenlib:3.2.3.358") {
         transitive = false
     } // CCL 3.2.3.358
+    compileOnly ("curse.maven:mcmultipart-239431:2615930") {
+        transitive = false
+    } // MCMultiPart 2.5.3
+    compileOnly ("curse.maven:cofh-core-69162:2920433") {
+        transitive = false
+    } // CoFH Core 4.6.6.1
+    compileOnly ("curse.maven:redstone-flux-270789:2920436") {
+        transitive = false
+    } // Redstone Flux 2.1.1.1
+    compileOnly ("curse.maven:cofh-world-271384:2920434") {
+        transitive = false
+    } // CoFH World 1.4.0.1
+    compileOnly ("curse.maven:thermal-dynamics-227443:2920505") {
+        transitive = false
+    } // Thermal Dynamics 2.5.6.1
+    compileOnly ("curse.maven:thermal-foundation-222880:2926428") {
+        transitive = false
+    } // Thermal Foundation 2.6.7.1
+    compileOnly ("curse.maven:thermal-expansion-69163:5372749") {
+        transitive = false
+    } // Thermal Expansion 5.5.7.1
+    compileOnly ("curse.maven:opencomputers-223008:6608365") {
+        transitive = false
+    } // OpenComputers 1.8.9a
     implementation rfg.deobf("curse.maven:logistics-pipes-232838:4849512") // Logistics Pipes 0.10.4.49
-
-    implementation rfg.deobf("curse.maven:additional-pipes-for-buildcraft-302569:2615327") // Additional Pipes 6.0.0.8
 }

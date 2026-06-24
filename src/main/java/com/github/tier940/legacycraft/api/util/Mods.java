@@ -127,6 +127,8 @@ public enum Mods {
         public static final String INVENTORY_TWEAKS = "inventorytweaks";
         public static final String JOURNEY_MAP = "journeymap";
         public static final String JUST_ENOUGH_ITEMS = "jei";
+        public static final String LOGISTICS_PIPES = "logisticspipes";
+        public static final String ADDITIONAL_PIPES = "additionalpipes";
         public static final String MODULRAUI = "modularui";
         public static final String MIXINBOOTER = "mixinbooter";
         public static final String NEEVES_AE2 = "nae2";
