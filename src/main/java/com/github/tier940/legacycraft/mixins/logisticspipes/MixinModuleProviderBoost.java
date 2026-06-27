@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.github.tier940.legacycraft.core.logisticspipes.TeleportPipeAdjacency;
+import com.github.tier940.legacycraft.integration.logisticspipes.TeleportPipeAdjacency;
 
 import logisticspipes.modules.LogisticsModule;
 import logisticspipes.modules.ModuleProvider;

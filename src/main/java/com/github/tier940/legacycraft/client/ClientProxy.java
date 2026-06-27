@@ -8,7 +8,7 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import com.github.tier940.legacycraft.common.CommonProxy;
 import com.github.tier940.legacycraft.core.LCCoreModule;
-import com.github.tier940.legacycraft.core.additionalpipes.PowerTeleportPipeFix;
+import com.github.tier940.legacycraft.integration.additionalpipes.PowerTeleportPipeFix;
 
 @Mod.EventBusSubscriber(Side.CLIENT)
 public class ClientProxy extends CommonProxy {

@@ -1,4 +1,4 @@
-package com.github.tier940.legacycraft.core.additionalpipes;
+package com.github.tier940.legacycraft.integration.additionalpipes;
 
 import java.lang.reflect.Field;
 import java.util.List;

@@ -16,6 +16,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import com.github.tier940.legacycraft.api.ModValues;
 import com.github.tier940.legacycraft.api.util.ModLog;
+import com.github.tier940.legacycraft.api.util.Mods;
 import com.github.tier940.legacycraft.modules.ModuleManager;
 import com.github.tier940.legacycraft.modules.Modules;
 
@@ -23,7 +24,10 @@ import com.github.tier940.legacycraft.modules.Modules;
      modid = Tags.MODID,
      name = Tags.MODNAME,
      version = Tags.VERSION,
-     dependencies = "after:logisticspipes;after:additionalpipes")
+     updateJSON = "https://forge.curseupdate.com/851103/gtexpert",
+     dependencies = "required-after:" + Mods.Names.MIXINBOOTER + "@[10.6,);" +
+             "after:" + Mods.Names.LOGISTICS_PIPES + ";" +
+             "after:" + Mods.Names.ADDITIONAL_PIPES + ";")
 public class LegacyCraftMod {
 
     private ModuleManager moduleManager;

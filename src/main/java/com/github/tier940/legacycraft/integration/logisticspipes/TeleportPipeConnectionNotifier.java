@@ -1,4 +1,4 @@
-package com.github.tier940.legacycraft.core.logisticspipes;
+package com.github.tier940.legacycraft.integration.logisticspipes;
 
 import java.util.HashSet;
 import java.util.Set;

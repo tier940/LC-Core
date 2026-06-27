@@ -86,6 +86,7 @@ jobs:
           curseforge-id: ${{ env.CURSEFORGE_PROJECT_ID }}
           curseforge-token: "${{ secrets.CURSEFORGE_API_KEY }}"
           curseforge-dependencies: |
+            mixin-booter(required)
             bc-remastered(required)
             logistics-pipes(required)
             additional-pipes-for-buildcraft(required)

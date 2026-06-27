@@ -1,4 +1,4 @@
-package com.github.tier940.legacycraft.core.logisticspipes;
+package com.github.tier940.legacycraft.integration.logisticspipes;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
