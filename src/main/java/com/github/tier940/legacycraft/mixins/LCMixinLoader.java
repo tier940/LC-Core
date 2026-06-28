@@ -15,7 +15,7 @@ import com.google.common.collect.ImmutableMap;
 import zone.rong.mixinbooter.ILateMixinLoader;
 
 @SuppressWarnings("unused")
-public class MixinModuleProvider implements ILateMixinLoader {
+public class LCMixinLoader implements ILateMixinLoader {
 
     public static final Map<String, Boolean> modMixinsConfig = new ImmutableMap.Builder<String, Boolean>()
             .put(Mods.Names.LOGISTICS_PIPES, true)

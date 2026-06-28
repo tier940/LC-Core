@@ -45,7 +45,6 @@ public enum Mods {
     GregicalityMultiblocks(Names.GREGICALITY_MULTIBLOCKS),
     GregTechFoodOption(Names.GREGTECH_FOOD_OPTION),
     GregTechExpertCore(Names.GREGTECH_EXPERT_CORE),
-    GregTechChisel(Names.GREGTECH_CHISEL),
     GregTechWoodProcessing(Names.GREGTECH_WOOD_PROCESSING),
     GroovyScript(Names.GROOVY_SCRIPT),
     HWYLA(Names.HWYLA),
@@ -119,7 +118,6 @@ public enum Mods {
         public static final String GREGICALITY_MULTIBLOCKS = "gcym";
         public static final String GREGTECH_FOOD_OPTION = "gregtechfoodoption";
         public static final String GREGTECH_EXPERT_CORE = "gtexpert";
-        public static final String GREGTECH_CHISEL = ModValues.MODID;
         public static final String GREGTECH_WOOD_PROCESSING = "gtwp";
         public static final String GROOVY_SCRIPT = "groovyscript";
         public static final String HWYLA = "hwyla";
@@ -190,7 +188,7 @@ public enum Mods {
         if (isModLoaded()) {
             String modName = TextFormatting.BOLD + ID + TextFormatting.RESET;
             List<String> messages = new ArrayList<>();
-            messages.add(modName + " mod detected, this mod is incompatible with GregTech CE Unofficial.");
+            messages.add(modName + " mod detected, this mod is incompatible with LegacyCraftCore.");
             messages.addAll(Arrays.asList(customMessages));
             if (FMLLaunchHandler.side() == Side.SERVER) {
                 throw new RuntimeException(String.join(",", messages));

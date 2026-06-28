@@ -24,7 +24,7 @@ env:
 
   # Curseforge and Modrinth project IDs
   CURSEFORGE_PROJECT_ID: "1582641"
-  #MODRINTH_PROJECT_ID: "ipueNiWG"
+  #MODRINTH_PROJECT_ID: ""
 
 concurrency:
   group: publish-${{ github.ref }}
