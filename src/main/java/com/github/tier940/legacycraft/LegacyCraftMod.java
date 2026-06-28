@@ -24,7 +24,7 @@ import com.github.tier940.legacycraft.modules.Modules;
      modid = Tags.MODID,
      name = Tags.MODNAME,
      version = Tags.VERSION,
-     updateJSON = "https://forge.curseupdate.com/851103/gtexpert",
+     updateJSON = "https://forge.curseupdate.com/1582641/legacycraft",
      dependencies = "required-after:" + Mods.Names.MIXINBOOTER + "@[10.6,);" +
              "after:" + Mods.Names.LOGISTICS_PIPES + ";" +
              "after:" + Mods.Names.ADDITIONAL_PIPES + ";")
