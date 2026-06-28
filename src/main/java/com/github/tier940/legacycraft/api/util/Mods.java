@@ -19,8 +19,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.github.tier940.legacycraft.api.ModValues;
-
 public enum Mods {
 
     AEAdditions(Names.AE_ADDITIONS),
