@@ -280,6 +280,7 @@ public class ModuleManager implements IModuleManager {
         for (IModuleContainer container : containers.values()) {
             String containerID = container.getID();
             List<IModule> containerModules = modules.get(containerID);
+            if (containerModules == null) continue;
             IModule coreModule = getCoreModule(containerModules);
             if (coreModule == null) {
                 throw new IllegalStateException("Could not find core module for module container " + containerID);
@@ -288,7 +289,7 @@ public class ModuleManager implements IModuleManager {
                 containerModules.add(0, coreModule);
             }
 
-            logger.debug("containterModule size: " + containerModules.size());
+            logger.debug("containerModule size: " + containerModules.size());
 
             // Remove disabled modules and gather potential modules to load
             Iterator<IModule> iterator = containerModules.iterator();
@@ -321,7 +322,7 @@ public class ModuleManager implements IModuleManager {
                     changed = true;
                     TModule annotation = module.getClass().getAnnotation(TModule.class);
                     String moduleID = annotation.moduleID();
-                    toLoad.remove(new ResourceLocation(moduleID));
+                    toLoad.remove(new ResourceLocation(annotation.containerID(), moduleID));
                     logger.debug("Module {} is missing at least one of module dependencies: {}, skipping loading...",
                             moduleID, dependencies);
                 }

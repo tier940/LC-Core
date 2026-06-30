@@ -50,6 +50,8 @@ public enum Mods {
     InventoryTweaks(Names.INVENTORY_TWEAKS),
     JourneyMap(Names.JOURNEY_MAP),
     JustEnoughItems(Names.JUST_ENOUGH_ITEMS),
+    BuildCraft(Names.BUILDCRAFT),
+    BuildCraftSilicon(Names.BUILDCRAFT_SILICON),
     ModularUI(Names.MODULRAUI),
     MixinBooter(Names.MIXINBOOTER),
     NeevesAE2(Names.NEEVES_AE2),
@@ -123,6 +125,8 @@ public enum Mods {
         public static final String INVENTORY_TWEAKS = "inventorytweaks";
         public static final String JOURNEY_MAP = "journeymap";
         public static final String JUST_ENOUGH_ITEMS = "jei";
+        public static final String BUILDCRAFT = "buildcraftcore";
+        public static final String BUILDCRAFT_SILICON = "buildcraftsilicon";
         public static final String LOGISTICS_PIPES = "logisticspipes";
         public static final String ADDITIONAL_PIPES = "additionalpipes";
         public static final String MODULRAUI = "modularui";

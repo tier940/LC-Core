@@ -1,6 +1,5 @@
 package com.github.tier940.legacycraft.mixins.logisticspipes;
 
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -24,6 +23,9 @@ public abstract class MixinModuleProviderBoost extends LogisticsModule {
     private static final int LC_CORE_BOOST_ITEMS = 4096;
     private static final int LC_CORE_BOOST_STACKS = 64;
 
+    private long lcCoreCachedTick = -1;
+    private boolean lcCoreCachedAdjacent = false;
+
     @Inject(method = "itemsToExtract", at = @At("RETURN"), cancellable = true)
     private void lcCoreBoostItemsThroughTeleport(CallbackInfoReturnable<Integer> cir) {
         if (lcCoreIsAdjacentToItemTeleport()) {
@@ -40,7 +42,12 @@ public abstract class MixinModuleProviderBoost extends LogisticsModule {
 
     private boolean lcCoreIsAdjacentToItemTeleport() {
         World world = getWorld();
-        BlockPos pos = getBlockPos();
-        return TeleportPipeAdjacency.isAdjacentToItemTeleport(world, pos);
+        if (world == null) return false;
+        long tick = world.getTotalWorldTime();
+        if (tick != lcCoreCachedTick) {
+            lcCoreCachedTick = tick;
+            lcCoreCachedAdjacent = TeleportPipeAdjacency.isAdjacentToItemTeleport(world, getBlockPos());
+        }
+        return lcCoreCachedAdjacent;
     }
 }

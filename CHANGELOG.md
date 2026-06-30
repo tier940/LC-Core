@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * * *
 
+## [1.2.5]
+
+### Fixed
+
+- **BuildCraft Assembly Table: crafted items went to the wrong pipe even when only one output pipe was connected**
+    - The table picked an output pipe at random each time crafting completed, so items could leave through any adjacent pipe regardless of how the automation was arranged.
+    - Items now leave through the first available pipe in a consistent direction, making the output side predictable and controllable through pipe placement alone.
+
+- **Logistics Pipes re-sent ingredients to the assembly table after reloading the world mid-craft, causing duplicate crafting or items stuck in pipes**
+    - In-transit item counts were not saved when the world closed, so Logistics Pipes incorrectly believed no ingredients were on the way and dispatched a second batch on the next load. The in-transit state is now persisted and restored on load, and each restored entry is given a fresh 640-tick delivery window, so Logistics Pipes correctly waits for ingredients already in the pipe network to arrive.
+
+- **Game crashed when Logistics Pipes routed items through an item teleport pipe in certain setups**
+
+### Changed
+
+- **Reduced server lag caused by Logistics Pipes provider modules placed next to item teleport pipes**
+
+* * *
+
 ## [1.2.4]
 
 ### Changed

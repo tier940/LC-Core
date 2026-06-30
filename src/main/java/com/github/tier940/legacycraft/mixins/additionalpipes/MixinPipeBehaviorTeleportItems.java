@@ -151,10 +151,10 @@ public abstract class MixinPipeBehaviorTeleportItems {
             if (router == null) continue;
 
             // Adjacent routing pipe IS the destination — best possible match.
-            if (destinationUUID.equals(router.getId())) return DIRECT_NEIGHBOR_DISTANCE;
+            if (destinationUUID != null && destinationUUID.equals(router.getId())) return DIRECT_NEIGHBOR_DISTANCE;
 
             List<List<ExitRoute>> routeTable = router.getRouteTable();
-            if (destinationSimpleID >= routeTable.size()) continue;
+            if (routeTable == null || destinationSimpleID >= routeTable.size()) continue;
             List<ExitRoute> routes = routeTable.get(destinationSimpleID);
             if (routes == null) continue;
             for (ExitRoute route : routes) {

@@ -26,8 +26,9 @@ import com.github.tier940.legacycraft.modules.Modules;
      version = Tags.VERSION,
      updateJSON = "https://forge.curseupdate.com/1582641/legacycraft",
      dependencies = "required-after:" + Mods.Names.MIXINBOOTER + "@[10.6,);" +
-             "after:" + Mods.Names.LOGISTICS_PIPES + ";" +
-             "after:" + Mods.Names.ADDITIONAL_PIPES + ";")
+             "required-after:" + Mods.Names.BUILDCRAFT + "@[8.0,);" +
+             "required-after:" + Mods.Names.LOGISTICS_PIPES + ";" +
+             "required-after:" + Mods.Names.ADDITIONAL_PIPES + ";")
 public class LegacyCraftMod {
 
     private ModuleManager moduleManager;

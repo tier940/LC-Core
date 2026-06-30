@@ -18,6 +18,7 @@ import zone.rong.mixinbooter.ILateMixinLoader;
 public class LCMixinLoader implements ILateMixinLoader {
 
     public static final Map<String, Boolean> modMixinsConfig = new ImmutableMap.Builder<String, Boolean>()
+            .put(Mods.Names.BUILDCRAFT_SILICON, true)
             .put(Mods.Names.LOGISTICS_PIPES, true)
             .put(Mods.Names.ADDITIONAL_PIPES, true)
             .build();
