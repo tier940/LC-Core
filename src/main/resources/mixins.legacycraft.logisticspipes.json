@@ -6,8 +6,13 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinCoreRoutedPipe",
+    "MixinInjectItemPerf",
+    "MixinLogisticsManagerPerf",
+    "MixinModuleCrafterOverflow",
     "MixinModuleProviderBoost",
-    "MixinPipeTransportLogistics"
+    "MixinModuleProviderCache",
+    "MixinPipeTransportLogistics",
+    "MixinServerRouterPerf"
   ],
   "client": [],
   "server": []
