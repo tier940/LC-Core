@@ -4,6 +4,21 @@
 
 ---
 
+## Dependencies
+
+| Mod | Required |
+|-----|----------|
+| [MixinBooter](https://www.curseforge.com/minecraft/mc-mods/mixin-booter) (10.6+) | Yes |
+| [Logistics Pipes](https://www.curseforge.com/minecraft/mc-mods/logistics-pipes) | Yes |
+| [BuildCraft Remastered](https://www.curseforge.com/minecraft/mc-mods/bc-remastered) (8.0+) | No |
+| [AkutoLib](https://www.curseforge.com/minecraft/mc-mods/akutolib) | No |
+| [AkutoEngine](https://www.curseforge.com/minecraft/mc-mods/akuto-engine) | No |
+| [Additional Pipes](https://www.curseforge.com/minecraft/mc-mods/additional-pipes-for-buildcraft) | No |
+
+Optional mods are detected at startup. Their fixes are only applied when the corresponding mod is present.
+
+---
+
 ## What It Fixes
 
 - AkutoEngine + BuildCraft Remastered

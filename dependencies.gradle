@@ -39,11 +39,7 @@
  */
 dependencies {
     // Hard Dependencies
-    implementation rfg.deobf("curse.maven:bc-remastered-892913:7807853") // BC remastered 8.0.11
-    implementation rfg.deobf("curse.maven:akutolib-304964:3097735") // AkutoLib 3.0.1
-    implementation rfg.deobf("curse.maven:akuto-engine-278276:3532353") // Akuto Engine 2.0.13
-    implementation rfg.deobf("curse.maven:additional-pipes-for-buildcraft-302569:2615327") // Additional Pipes 6.0.0.8
-
+    implementation rfg.deobf("curse.maven:logistics-pipes-232838:4849512") // Logistics Pipes 0.10.4.49
     implementation ("codechicken:codechickenlib:3.2.3.358") {
         transitive = false
     } // CCL 3.2.3.358
@@ -71,5 +67,25 @@ dependencies {
     compileOnly ("curse.maven:opencomputers-223008:6608365") {
         transitive = false
     } // OpenComputers 1.8.9a
-    implementation rfg.deobf("curse.maven:logistics-pipes-232838:4849512") // Logistics Pipes 0.10.4.49
+
+
+    // Debug BC remastered: 8.0.11
+    compileOnly rfg.deobf("curse.maven:bc-remastered-892913:7807853")
+    if (project.debug_all.toBoolean() || project.debug_bc.toBoolean()) {
+        runtimeOnly "curse.maven:bc-remastered-892913:7807853"
+    }
+
+    // Debug Akuto
+    compileOnly rfg.deobf("curse.maven:akutolib-304964:3097735") // AkutoLib: 3.0.1
+    compileOnly rfg.deobf("curse.maven:akuto-engine-278276:3532353") // Akuto Engine: 2.0.13
+    if (project.debug_all.toBoolean() || project.debug_ak.toBoolean()) {
+        runtimeOnly "curse.maven:akutolib-304964:3097735"
+        runtimeOnly "curse.maven:akuto-engine-278276:3532353"
+    }
+
+    // Debug Additional Pipes: 6.0.0.8
+    compileOnly rfg.deobf("curse.maven:additional-pipes-for-buildcraft-302569:2615327")
+    if (project.debug_all.toBoolean() || project.debug_ap.toBoolean()) {
+        runtimeOnly "curse.maven:additional-pipes-for-buildcraft-302569:2615327"
+    }
 }
