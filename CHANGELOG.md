@@ -7,7 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * * *
 
-## [1.2.6]
+## [1.3.0]
+
+### Added
+
+- **Provider Module MK2 and Provider Logistics Pipe MK2**
+    - 128 items per tick (16x), 8 stacks per tick (8x), Fast item send mode, 2x energy cost.
+    - Includes the per-tick inventory cache and teleport pipe adjacency boost that were previously applied to all providers via Mixin.
+
+- **Crafting Module MK2 and Crafting Logistics Pipe MK2**
+    - 64 items per tick (64x), Fast item send mode, 1.5x energy cost.
+
+- **Crafting Module MK3 and Crafting Logistics Pipe MK3**
+    - 128 items per tick, 8 stacks per tick, Fast item send mode, 2x energy cost.
+    - 16-slot internal buffer (127 items each) that holds crafted output when the destination is full.
+    - Buffered items are automatically pushed back into the adjacent crafter when new orders arrive, or routed into the network when idle.
+    - Buffer contents are dropped when the pipe is removed and persisted across world saves.
 
 ### Changed
 

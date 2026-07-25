@@ -1,6 +1,9 @@
 package com.github.tier940.legacycraft.integration.logisticspipes;
 
+import net.minecraft.item.Item;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 
 import com.github.tier940.legacycraft.api.ModValues;
@@ -8,8 +11,20 @@ import com.github.tier940.legacycraft.api.modules.TModule;
 import com.github.tier940.legacycraft.api.util.Mods;
 import com.github.tier940.legacycraft.integration.LCIntegrationModule;
 import com.github.tier940.legacycraft.integration.LCIntegrationSubmodule;
+import com.github.tier940.legacycraft.integration.logisticspipes.spec.modules.ModuleCrafterMk2;
+import com.github.tier940.legacycraft.integration.logisticspipes.spec.modules.ModuleCrafterMk3;
+import com.github.tier940.legacycraft.integration.logisticspipes.spec.modules.ModuleProviderMk2;
+import com.github.tier940.legacycraft.integration.logisticspipes.spec.pipes.PipeCraftingMk2;
+import com.github.tier940.legacycraft.integration.logisticspipes.spec.pipes.PipeCraftingMk3;
+import com.github.tier940.legacycraft.integration.logisticspipes.spec.pipes.PipeProviderMk2;
+import com.github.tier940.legacycraft.integration.logisticspipes.spec.recipes.Mk2ModuleRecipes;
+import com.github.tier940.legacycraft.integration.logisticspipes.spec.recipes.Mk2PipeRecipes;
+import com.github.tier940.legacycraft.integration.logisticspipes.spec.recipes.Mk3ModuleRecipes;
+import com.github.tier940.legacycraft.integration.logisticspipes.spec.recipes.Mk3PipeRecipes;
 import com.github.tier940.legacycraft.modules.Modules;
 
+import logisticspipes.items.ItemModule;
+import logisticspipes.pipes.basic.LogisticsBlockGenericPipe;
 import logisticspipes.proxy.SimpleServiceLocator;
 
 @TModule(
@@ -19,6 +34,33 @@ import logisticspipes.proxy.SimpleServiceLocator;
          description = "Routes Logistics Pipes traffic across Additional Pipes teleport pipes.",
          modDependencies = { Mods.Names.LOGISTICS_PIPES })
 public class LogisticsPipesModule extends LCIntegrationSubmodule {
+
+    @Override
+    public void registerItems(RegistryEvent.Register<Item> event) {
+        ItemModule.registerModule(event.getRegistry(),
+                ModuleProviderMk2.getName(), ModuleProviderMk2::new);
+        ItemModule.registerModule(event.getRegistry(),
+                ModuleCrafterMk2.getName(), ModuleCrafterMk2::new);
+        ItemModule.registerModule(event.getRegistry(),
+                ModuleCrafterMk3.getName(), ModuleCrafterMk3::new);
+
+        LogisticsBlockGenericPipe.registerPipe(event.getRegistry(),
+                "provider_mk2", PipeProviderMk2::new);
+        LogisticsBlockGenericPipe.registerPipe(event.getRegistry(),
+                "crafting_mk2", PipeCraftingMk2::new);
+        LogisticsBlockGenericPipe.registerPipe(event.getRegistry(),
+                "crafting_mk3", PipeCraftingMk3::new);
+
+        LCIntegrationModule.logger.info("Registered Mk2/Mk3 modules and pipes");
+    }
+
+    @Override
+    public void registerRecipesNormal(RegistryEvent.Register<IRecipe> event) {
+        Mk2ModuleRecipes.register(event);
+        Mk2PipeRecipes.register(event);
+        Mk3ModuleRecipes.register(event);
+        Mk3PipeRecipes.register(event);
+    }
 
     @Override
     public void postInit(FMLPostInitializationEvent event) {
