@@ -32,6 +32,7 @@ public class MoveSolidsTransformer implements IClassTransformer {
     private static final String LP_ITEM_LIST = "logisticspipes/transport/LPItemList";
     private static final String LP_TRAVELING_ITEM = "logisticspipes/transport/LPTravelingItem";
     private static final String LP_TILE = "logisticspipes/pipes/basic/LogisticsTileGenericPipe";
+    private static final String TILE_ENTITY = "net/minecraft/tileentity/TileEntity";
     private static final String CONTAINER_FIELD = "container";
     private static final String CONTAINER_DESC = "L" + LP_TILE + ";";
     private static final String ITEMS_FIELD = "items";
@@ -93,7 +94,7 @@ public class MoveSolidsTransformer implements IClassTransformer {
                 super.visitFieldInsn(Opcodes.GETFIELD,
                         "logisticspipes/transport/PipeTransportLogistics",
                         CONTAINER_FIELD, CONTAINER_DESC);
-                super.visitMethodInsn(Opcodes.INVOKEVIRTUAL, LP_TILE, GET_WORLD,
+                super.visitMethodInsn(Opcodes.INVOKEVIRTUAL, TILE_ENTITY, GET_WORLD,
                         GET_WORLD_DESC, false);
                 super.visitMethodInsn(Opcodes.INVOKESTATIC, MAIN_PROXY, IS_SERVER,
                         IS_SERVER_DESC, false);

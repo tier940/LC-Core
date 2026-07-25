@@ -1,7 +1,6 @@
 package com.github.tier940.legacycraft.integration.logisticspipes;
 
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 
 import com.github.tier940.legacycraft.api.ModValues;
@@ -23,7 +22,7 @@ public class LogisticsPipesModule extends LCIntegrationSubmodule {
 
     @Override
     public void postInit(FMLPostInitializationEvent event) {
-        if (Loader.isModLoaded(Mods.Names.ADDITIONAL_PIPES)) {
+        if (Mods.AdditionalPipes.isModLoaded()) {
             registerAdditionalPipesTeleportConnection();
             MinecraftForge.EVENT_BUS.register(new TeleportPipeConnectionNotifier());
         }
