@@ -15,7 +15,7 @@ import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.silicon.tile.TileAssemblyTable;
 
 @Mixin(value = TileAssemblyTable.class, remap = false)
-public class MixinTileAssemblyTable {
+public class MixinAssemblyTableOutputFix {
 
     @Redirect(
               method = "update",
@@ -24,7 +24,7 @@ public class MixinTileAssemblyTable {
                        target = "Lbuildcraft/lib/misc/InventoryUtil;addToBestAcceptor(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/EnumFacing;Lnet/minecraft/item/ItemStack;)V",
                        remap = false))
     @SuppressWarnings("ConstantValue")
-    private void lcCoreDeterministicOutput(World world, BlockPos pos, EnumFacing ignore, ItemStack stack) {
+    private void lc$deterministicOutput(World world, BlockPos pos, EnumFacing ignore, ItemStack stack) {
         for (EnumFacing side : EnumFacing.VALUES) {
             if (stack.isEmpty()) return;
             if (side == ignore) continue;

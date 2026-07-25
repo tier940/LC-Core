@@ -5,14 +5,14 @@
   "minVersion": "0.8",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinCoreRoutedPipe",
+    "MixinCrafterOverflow",
     "MixinInjectItemPerf",
     "MixinLogisticsManagerPerf",
-    "MixinModuleCrafterOverflow",
-    "MixinModuleProviderBoost",
-    "MixinModuleProviderCache",
-    "MixinPipeTransportLogistics",
-    "MixinServerRouterPerf"
+    "MixinPowerConnectFix",
+    "MixinProviderCachePerf",
+    "MixinProviderTeleportFix",
+    "MixinServerRouterPerf",
+    "MixinTransitPersistence"
   ],
   "client": [],
   "server": []

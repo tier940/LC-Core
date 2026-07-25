@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * * *
 
+## [1.2.6]
+
+### Changed
+
+- **BuildCraft, Additional Pipes, AkutoLib, and AkutoEngine are now optional dependencies**
+    - The game can now start with only Logistics Pipes and MixinBooter installed. Fixes for optional mods are applied only when those mods are present.
+
+- **Logistics Pipes: Speed Upgrade is significantly more effective**
+    - The speed coefficient per upgrade has been increased from 0.02 to 0.10 (5x). With 20 upgrades, item speed goes from 0.28 to 0.60; 40 upgrades reaches the maximum speed of 1.0.
+    - The energy cost coefficient has been increased proportionally (0.03 to 0.15) to match.
+
+- **Logistics Pipes: Extractor Module is significantly faster**
+    - Base extraction interval reduced from 80 ticks (~4 seconds) to 20 ticks (1 second), a 4x improvement.
+    - Base items extracted per cycle increased from 1 to 8.
+    - With 4 Action Speed Upgrades installed, the extractor now operates every tick.
+    - The Advanced Extractor Module receives the same improvements.
+
+* * *
+
 ## [1.2.5]
 
 ### Fixed

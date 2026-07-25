@@ -35,7 +35,7 @@ import logisticspipes.utils.item.ItemIdentifier;
 import logisticspipes.utils.item.ItemIdentifierStack;
 
 @Mixin(value = ModuleCrafter.class, remap = false)
-public abstract class MixinModuleCrafterOverflow extends LogisticsModule {
+public abstract class MixinCrafterOverflow extends LogisticsModule {
 
     @Shadow
     private WeakReference<TileEntity> lastAccessedCrafter;

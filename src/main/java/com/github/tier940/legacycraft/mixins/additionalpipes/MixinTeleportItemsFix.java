@@ -33,19 +33,19 @@ import logisticspipes.routing.ItemRoutingInformation;
 import logisticspipes.routing.PipeRoutingConnectionType;
 
 @Mixin(value = PipeBehaviorTeleportItems.class, remap = false)
-public abstract class MixinPipeBehaviorTeleportItems {
+public abstract class MixinTeleportItemsFix {
 
     @Unique
-    private static final String LC_CORE_ROUTING_NBT_KEY = "logisticspipes:routingdata_buildcraft"; // NOSONAR
+    private static final String LC$ROUTING_NBT_KEY = "logisticspipes:routingdata_buildcraft"; // NOSONAR
 
     @Unique
-    private static final double LC_CORE_TELEPORTED_ITEM_SPEED = 0.1;
+    private static final double LC$TELEPORTED_ITEM_SPEED = 0.1;
 
     @Unique
-    private static final double LC_CORE_DIRECT_NEIGHBOR_DISTANCE = 0.0;
+    private static final double LC$DIRECT_NEIGHBOR_DISTANCE = 0.0;
 
     @Inject(method = "onTryDrop", at = @At("HEAD"), cancellable = true)
-    private void lcCore_destinationAwareTeleport(PipeEventItem.Drop event, CallbackInfo ci) {
+    private void lc$destinationAwareTeleport(PipeEventItem.Drop event, CallbackInfo ci) {
         PipeBehaviorTeleport self = (PipeBehaviorTeleport) (Object) this;
         TilePipeHolder holder = self.getContainer();
         if (holder == null) return;
@@ -60,8 +60,8 @@ public abstract class MixinPipeBehaviorTeleportItems {
             return;
         }
 
-        UUID destinationUUID = lcCore_extractDestinationUUID(event.getStack());
-        PipeBehaviorTeleportItems target = lcCore_selectTarget(candidates, destinationUUID);
+        UUID destinationUUID = lc$extractDestinationUUID(event.getStack());
+        PipeBehaviorTeleportItems target = lc$selectTarget(candidates, destinationUUID);
         if (target == null) {
             event.setStack(ItemStack.EMPTY);
             ci.cancel();
@@ -76,19 +76,19 @@ public abstract class MixinPipeBehaviorTeleportItems {
         }
 
         ((PipeFlowItems) target.pipe.getFlow())
-                .insertItemsForce(event.getStack(), exitSide, null, LC_CORE_TELEPORTED_ITEM_SPEED);
+                .insertItemsForce(event.getStack(), exitSide, null, LC$TELEPORTED_ITEM_SPEED);
         event.setStack(ItemStack.EMPTY);
         ci.cancel();
     }
 
     @Unique
-    private UUID lcCore_extractDestinationUUID(ItemStack stack) {
+    private UUID lc$extractDestinationUUID(ItemStack stack) {
         if (stack == null || stack.isEmpty()) return null;
         NBTTagCompound tag = stack.getTagCompound();
-        if (tag == null || !tag.hasKey(LC_CORE_ROUTING_NBT_KEY)) return null;
+        if (tag == null || !tag.hasKey(LC$ROUTING_NBT_KEY)) return null;
         try {
             ItemRoutingInformation info = ItemRoutingInformation
-                    .restoreFromNBT(tag.getCompoundTag(LC_CORE_ROUTING_NBT_KEY));
+                    .restoreFromNBT(tag.getCompoundTag(LC$ROUTING_NBT_KEY));
             return info != null ? info.destinationUUID : null;
         } catch (Exception e) {
             return null;
@@ -96,8 +96,8 @@ public abstract class MixinPipeBehaviorTeleportItems {
     }
 
     @Unique
-    private PipeBehaviorTeleportItems lcCore_selectTarget(
-                                                          ArrayList<ITeleportPipe> candidates, UUID destinationUUID) {
+    private PipeBehaviorTeleportItems lc$selectTarget(
+                                                      ArrayList<ITeleportPipe> candidates, UUID destinationUUID) {
         int destinationSimpleID = -1;
         if (destinationUUID != null && SimpleServiceLocator.routerManager != null) {
             destinationSimpleID = SimpleServiceLocator.routerManager.getIDforUUID(destinationUUID);
@@ -109,11 +109,11 @@ public abstract class MixinPipeBehaviorTeleportItems {
 
         for (ITeleportPipe candidate : candidates) {
             if (!(candidate instanceof PipeBehaviorTeleportItems items)) continue;
-            if (!lcCore_hasConnectedPipe(items)) continue;
+            if (!lc$hasConnectedPipe(items)) continue;
             if (fallback == null) fallback = items;
             if (destinationSimpleID < 0) continue;
 
-            double distance = lcCore_shortestDistanceToDestination(items, destinationSimpleID, destinationUUID);
+            double distance = lc$shortestDistanceToDestination(items, destinationSimpleID, destinationUUID);
             if (distance < bestDistance) {
                 bestDistance = distance;
                 best = items;
@@ -124,7 +124,7 @@ public abstract class MixinPipeBehaviorTeleportItems {
     }
 
     @Unique
-    private boolean lcCore_hasConnectedPipe(PipeBehaviorTeleportItems candidate) {
+    private boolean lc$hasConnectedPipe(PipeBehaviorTeleportItems candidate) {
         for (EnumFacing face : EnumFacing.VALUES) {
             if (candidate.pipe.isConnected(face)) return true;
         }
@@ -132,10 +132,10 @@ public abstract class MixinPipeBehaviorTeleportItems {
     }
 
     @Unique
-    private double lcCore_shortestDistanceToDestination(
-                                                        PipeBehaviorTeleportItems candidate,
-                                                        int destinationSimpleID,
-                                                        UUID destinationUUID) {
+    private double lc$shortestDistanceToDestination(
+                                                    PipeBehaviorTeleportItems candidate,
+                                                    int destinationSimpleID,
+                                                    UUID destinationUUID) {
         TilePipeHolder holder = candidate.getContainer();
         if (holder == null) return Double.POSITIVE_INFINITY;
         World world = holder.getWorld();
@@ -150,7 +150,7 @@ public abstract class MixinPipeBehaviorTeleportItems {
             IRouter router = routingPipe.getRouter();
 
             if (destinationUUID != null && destinationUUID.equals(router.getId()))
-                return LC_CORE_DIRECT_NEIGHBOR_DISTANCE;
+                return LC$DIRECT_NEIGHBOR_DISTANCE;
 
             List<List<ExitRoute>> routeTable = router.getRouteTable();
             if (routeTable == null || destinationSimpleID >= routeTable.size()) continue;

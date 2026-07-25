@@ -26,8 +26,11 @@ public class LCMixinLoader implements ILateMixinLoader {
     @SuppressWarnings("SimplifyStreamApiCallChains")
     @Override
     public List<String> getMixinConfigs() {
-        return modMixinsConfig.keySet().stream().map(mod -> "mixins." + ModValues.MODID + "." + mod + ".json")
+        List<String> configs = modMixinsConfig.keySet().stream()
+                .map(mod -> "mixins." + ModValues.MODID + "." + mod + ".json")
                 .collect(Collectors.toList());
+        configs.add("mixins." + ModValues.MODID + ".logisticspipes.spec.json");
+        return configs;
     }
 
     @Override

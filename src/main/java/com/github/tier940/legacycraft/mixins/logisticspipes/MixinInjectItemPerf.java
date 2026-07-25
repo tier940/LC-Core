@@ -15,7 +15,7 @@ public abstract class MixinInjectItemPerf {
               method = "injectItem(Llogisticspipes/transport/LPTravelingItem;Lnet/minecraft/util/EnumFacing;)I",
               at = @At(value = "INVOKE",
                        target = "Llogisticspipes/routing/ItemRoutingInformation;clone()Llogisticspipes/routing/ItemRoutingInformation;"))
-    private ItemRoutingInformation lcCoreSkipInfoClone(ItemRoutingInformation info) {
+    private ItemRoutingInformation lc$skipInfoClone(ItemRoutingInformation info) {
         return info;
     }
 
@@ -23,5 +23,5 @@ public abstract class MixinInjectItemPerf {
               method = "injectItem(Llogisticspipes/transport/LPTravelingItem;Lnet/minecraft/util/EnumFacing;)I",
               at = @At(value = "INVOKE",
                        target = "Llogisticspipes/pipes/basic/debug/DebugLogController;log(Ljava/lang/String;)V"))
-    private void lcCoreSkipDebugLog(DebugLogController controller, String info) {}
+    private void lc$skipDebugLog(DebugLogController controller, String info) {}
 }

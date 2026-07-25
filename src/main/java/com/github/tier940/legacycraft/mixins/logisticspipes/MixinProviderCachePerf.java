@@ -22,13 +22,13 @@ import logisticspipes.modules.LogisticsModule;
 import logisticspipes.modules.ModuleProvider;
 
 @Mixin(value = ModuleProvider.class, remap = false)
-public abstract class MixinModuleProviderCache extends LogisticsModule {
+public abstract class MixinProviderCachePerf extends LogisticsModule {
 
     @Unique
-    private long lcCore_cachedInventoriesTick = -1;
+    private long lc$cachedInventoriesTick = -1;
 
     @Unique
-    private List<IInventoryUtil> lcCore_cachedInventories;
+    private List<IInventoryUtil> lc$cachedInventories;
 
     @Shadow
     private IInventoryUtil getInventoryUtilWithMode(NeighborTileEntity<TileEntity> neighbor) {
@@ -46,13 +46,13 @@ public abstract class MixinModuleProviderCache extends LogisticsModule {
         if (service == null) return Stream.empty();
         World world = getWorld();
         long tick = world != null ? world.getTotalWorldTime() : -1;
-        if (tick != lcCore_cachedInventoriesTick || lcCore_cachedInventories == null) {
-            lcCore_cachedInventoriesTick = tick;
-            lcCore_cachedInventories = service.getAvailableAdjacent().inventories().stream()
+        if (tick != lc$cachedInventoriesTick || lc$cachedInventories == null) {
+            lc$cachedInventoriesTick = tick;
+            lc$cachedInventories = service.getAvailableAdjacent().inventories().stream()
                     .map(this::getInventoryUtilWithMode)
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
         }
-        return lcCore_cachedInventories.stream();
+        return lc$cachedInventories.stream();
     }
 }

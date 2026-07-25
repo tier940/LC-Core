@@ -14,33 +14,33 @@ import logisticspipes.routing.ServerRouter;
 public abstract class MixinServerRouterPerf {
 
     @Unique
-    private boolean lcCore_lsaDirty = false;
+    private boolean lc$lsaDirty = false;
 
     @Invoker("SendNewLSA")
-    abstract void lcCore_callSendNewLSA();
+    abstract void lc$callSendNewLSA();
 
     @Redirect(method = "recheckAdjacent",
               at = @At(value = "INVOKE",
                        target = "Llogisticspipes/routing/ServerRouter;SendNewLSA()V"))
-    private void lcCore_deferSendNewLSA(ServerRouter self) {
-        lcCore_lsaDirty = true;
+    private void lc$deferSendNewLSA(ServerRouter self) {
+        lc$lsaDirty = true;
     }
 
     @Inject(method = "lazyUpdateRoutingTable", at = @At("HEAD"))
-    private void lcCore_flushLsaOnLazyUpdate(CallbackInfo ci) {
-        lcCore_flushDirtyLsa();
+    private void lc$flushLsaOnLazyUpdate(CallbackInfo ci) {
+        lc$flushDirtyLsa();
     }
 
     @Inject(method = "ensureLatestRoutingTable", at = @At("HEAD"))
-    private void lcCore_flushLsaOnEnsureLatest(CallbackInfo ci) {
-        lcCore_flushDirtyLsa();
+    private void lc$flushLsaOnEnsureLatest(CallbackInfo ci) {
+        lc$flushDirtyLsa();
     }
 
     @Unique
-    private void lcCore_flushDirtyLsa() {
-        if (lcCore_lsaDirty) {
-            lcCore_lsaDirty = false;
-            lcCore_callSendNewLSA();
+    private void lc$flushDirtyLsa() {
+        if (lc$lsaDirty) {
+            lc$lsaDirty = false;
+            lc$callSendNewLSA();
         }
     }
 }

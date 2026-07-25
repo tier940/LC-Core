@@ -17,10 +17,10 @@ import logisticspipes.pipes.basic.CoreRoutedPipe;
 import logisticspipes.routing.ItemRoutingInformation;
 
 @Mixin(value = CoreRoutedPipe.class, remap = false)
-public class MixinCoreRoutedPipe {
+public class MixinTransitPersistence {
 
     @Unique
-    private static final String LC_TRANSIT_KEY = "lc_inTransitToMe";
+    private static final String LC$TRANSIT_KEY = "lc_inTransitToMe";
 
     @Unique
     private static final int NBT_COMPOUND_TAG_ID = 10;
@@ -30,20 +30,20 @@ public class MixinCoreRoutedPipe {
     protected PriorityBlockingQueue<ItemRoutingInformation> _inTransitToMe;
 
     @Inject(method = "writeToNBT", at = @At("RETURN"))
-    private void lcCore_saveInTransit(NBTTagCompound nbttagcompound, CallbackInfo ci) {
+    private void lc$saveInTransit(NBTTagCompound nbttagcompound, CallbackInfo ci) {
         NBTTagList list = new NBTTagList();
         for (ItemRoutingInformation info : _inTransitToMe) {
             NBTTagCompound tag = new NBTTagCompound();
             info.writeToNBT(tag);
             list.appendTag(tag);
         }
-        nbttagcompound.setTag(LC_TRANSIT_KEY, list);
+        nbttagcompound.setTag(LC$TRANSIT_KEY, list);
     }
 
     @Inject(method = "readFromNBT", at = @At("RETURN"))
-    private void lcCore_restoreInTransit(NBTTagCompound nbttagcompound, CallbackInfo ci) {
-        if (!nbttagcompound.hasKey(LC_TRANSIT_KEY)) return;
-        NBTTagList list = nbttagcompound.getTagList(LC_TRANSIT_KEY, NBT_COMPOUND_TAG_ID);
+    private void lc$restoreInTransit(NBTTagCompound nbttagcompound, CallbackInfo ci) {
+        if (!nbttagcompound.hasKey(LC$TRANSIT_KEY)) return;
+        NBTTagList list = nbttagcompound.getTagList(LC$TRANSIT_KEY, NBT_COMPOUND_TAG_ID);
         for (int i = 0; i < list.tagCount(); i++) {
             ItemRoutingInformation info = ItemRoutingInformation
                     .restoreFromNBT(list.getCompoundTagAt(i));
