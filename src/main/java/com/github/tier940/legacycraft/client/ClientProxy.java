@@ -6,9 +6,9 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
+import com.github.tier940.legacycraft.api.util.Mods;
 import com.github.tier940.legacycraft.common.CommonProxy;
 import com.github.tier940.legacycraft.core.LCCoreModule;
-import com.github.tier940.legacycraft.integration.additionalpipes.PowerTeleportPipeFix;
 
 @Mod.EventBusSubscriber(Side.CLIENT)
 public class ClientProxy extends CommonProxy {
@@ -20,6 +20,8 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public static void registerModels(ModelRegistryEvent event) {
-        PowerTeleportPipeFix.registerModels(event, LCCoreModule.logger);
+        if (Mods.AdditionalPipes.isModLoaded()) {
+            AdditionalPipesClientHelper.registerModels(event, LCCoreModule.logger);
+        }
     }
 }

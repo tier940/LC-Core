@@ -1,51 +1,73 @@
 package com.github.tier940.legacycraft.integration.logisticspipes;
 
-import java.util.Set;
-
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.item.Item;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-
-import org.jetbrains.annotations.NotNull;
 
 import com.github.tier940.legacycraft.api.ModValues;
 import com.github.tier940.legacycraft.api.modules.TModule;
-import com.github.tier940.legacycraft.api.util.ModUtility;
 import com.github.tier940.legacycraft.api.util.Mods;
 import com.github.tier940.legacycraft.integration.LCIntegrationModule;
 import com.github.tier940.legacycraft.integration.LCIntegrationSubmodule;
+import com.github.tier940.legacycraft.integration.logisticspipes.spec.modules.ModuleCrafterMk2;
+import com.github.tier940.legacycraft.integration.logisticspipes.spec.modules.ModuleCrafterMk3;
+import com.github.tier940.legacycraft.integration.logisticspipes.spec.modules.ModuleProviderMk2;
+import com.github.tier940.legacycraft.integration.logisticspipes.spec.pipes.PipeCraftingMk2;
+import com.github.tier940.legacycraft.integration.logisticspipes.spec.pipes.PipeCraftingMk3;
+import com.github.tier940.legacycraft.integration.logisticspipes.spec.pipes.PipeProviderMk2;
+import com.github.tier940.legacycraft.integration.logisticspipes.spec.recipes.Mk2ModuleRecipes;
+import com.github.tier940.legacycraft.integration.logisticspipes.spec.recipes.Mk2PipeRecipes;
+import com.github.tier940.legacycraft.integration.logisticspipes.spec.recipes.Mk3ModuleRecipes;
+import com.github.tier940.legacycraft.integration.logisticspipes.spec.recipes.Mk3PipeRecipes;
 import com.github.tier940.legacycraft.modules.Modules;
-import com.google.common.collect.ImmutableSet;
 
+import logisticspipes.items.ItemModule;
+import logisticspipes.pipes.basic.LogisticsBlockGenericPipe;
 import logisticspipes.proxy.SimpleServiceLocator;
 
-/**
- * Bridges Additional Pipes teleport pipes into the Logistics Pipes routing graph and keeps the
- * routing cache primed on placement. Only loads when both Logistics Pipes and Additional Pipes
- * are present.
- */
 @TModule(
          moduleID = Modules.MODULE_LOGISTICS_PIPES,
          containerID = ModValues.MODID,
          name = "LegacyCraft Logistics Pipes Integration",
          description = "Routes Logistics Pipes traffic across Additional Pipes teleport pipes.",
-         modDependencies = { Mods.Names.LOGISTICS_PIPES, Mods.Names.ADDITIONAL_PIPES })
+         modDependencies = { Mods.Names.LOGISTICS_PIPES })
 public class LogisticsPipesModule extends LCIntegrationSubmodule {
 
-    private static final Set<ResourceLocation> DEPENDENCY_UIDS = ImmutableSet.of(
-            ModUtility.id(Modules.MODULE_INTEGRATION),
-            ModUtility.id(Modules.MODULE_ADDITIONAL_PIPES));
-
-    @NotNull
     @Override
-    public Set<ResourceLocation> getDependencyUids() {
-        return DEPENDENCY_UIDS;
+    public void registerItems(RegistryEvent.Register<Item> event) {
+        ItemModule.registerModule(event.getRegistry(),
+                ModuleProviderMk2.getName(), ModuleProviderMk2::new);
+        ItemModule.registerModule(event.getRegistry(),
+                ModuleCrafterMk2.getName(), ModuleCrafterMk2::new);
+        ItemModule.registerModule(event.getRegistry(),
+                ModuleCrafterMk3.getName(), ModuleCrafterMk3::new);
+
+        LogisticsBlockGenericPipe.registerPipe(event.getRegistry(),
+                "provider_mk2", PipeProviderMk2::new);
+        LogisticsBlockGenericPipe.registerPipe(event.getRegistry(),
+                "crafting_mk2", PipeCraftingMk2::new);
+        LogisticsBlockGenericPipe.registerPipe(event.getRegistry(),
+                "crafting_mk3", PipeCraftingMk3::new);
+
+        LCIntegrationModule.logger.info("Registered Mk2/Mk3 modules and pipes");
+    }
+
+    @Override
+    public void registerRecipesNormal(RegistryEvent.Register<IRecipe> event) {
+        Mk2ModuleRecipes.register(event);
+        Mk2PipeRecipes.register(event);
+        Mk3ModuleRecipes.register(event);
+        Mk3PipeRecipes.register(event);
     }
 
     @Override
     public void postInit(FMLPostInitializationEvent event) {
-        registerAdditionalPipesTeleportConnection();
-        MinecraftForge.EVENT_BUS.register(new TeleportPipeConnectionNotifier());
+        if (Mods.AdditionalPipes.isModLoaded()) {
+            registerAdditionalPipesTeleportConnection();
+            MinecraftForge.EVENT_BUS.register(new TeleportPipeConnectionNotifier());
+        }
     }
 
     private void registerAdditionalPipesTeleportConnection() {
@@ -55,13 +77,11 @@ public class LogisticsPipesModule extends LCIntegrationSubmodule {
             return;
         }
         AdditionalPipesTeleportConnection handler = new AdditionalPipesTeleportConnection();
-        // handler.init() returns false when AP failed its own init — safe to skip entirely.
         if (!handler.init()) {
             LCIntegrationModule.logger.info(
                     "Additional Pipes not detected — skipping teleport pipe connection handler");
             return;
         }
-        // ISpecialPipedConnection only; also registering ISpecialTileConnection double-counts routes.
         SimpleServiceLocator.specialpipeconnection.registerHandler(handler);
         LCIntegrationModule.logger.info(
                 "Registered Additional Pipes teleport connection handler (fix for RS485/LogisticsPipes#348)");

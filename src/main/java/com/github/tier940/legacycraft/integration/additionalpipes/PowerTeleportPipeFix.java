@@ -3,16 +3,16 @@ package com.github.tier940.legacycraft.integration.additionalpipes;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import org.apache.logging.log4j.Logger;
+
+import com.github.tier940.legacycraft.api.util.Mods;
 
 import buildcraft.additionalpipes.APPipeDefintions;
 import buildcraft.additionalpipes.AdditionalPipes;
@@ -37,8 +37,7 @@ public class PowerTeleportPipeFix {
     private static ItemPipeHolder pendingItem = null;
 
     public static void preInit(FMLPreInitializationEvent event, Logger logger) {
-        // AP must be loaded before touching any AP class; Loader.isModLoaded() is safe at preInit.
-        if (!Loader.isModLoaded("additionalpipes")) return;
+        if (!Mods.AdditionalPipes.isModLoaded()) return;
         // Skip if another source already registered the definition (e.g. a future AP update).
         if (APPipeDefintions.powerTeleportPipeDef != null) return;
 
@@ -46,7 +45,7 @@ public class PowerTeleportPipeFix {
             PipeDefinition.PipeDefinitionBuilder builder = new PipeDefinition.PipeDefinitionBuilder();
             // identifier is the registry key (ResourceLocation) used for PipeApi lookup and
             // world-save serialization; it is not a Java class name.
-            builder.identifier = new ResourceLocation("additionalpipes", "pipe_power_teleport");
+            builder.identifier = Mods.AdditionalPipes.getResource("pipe_power_teleport");
             // texturePrefix is the atlas path used by BCR's TextureStitchEvent.Pre handler to
             // load the 7 directional variants (e.g. _u/_d/_n/_s/_e/_w + _closed).
             builder.texturePrefix = "additionalpipes:pipes/pipe_power_teleport";
@@ -61,7 +60,7 @@ public class PowerTeleportPipeFix {
             PipeDefinition def = builder.define();
 
             ItemPipeHolder item = ItemPipeHolder.create(def);
-            item.setRegistryName(new ResourceLocation("additionalpipes", "pipe_power_teleport"));
+            item.setRegistryName(Mods.AdditionalPipes.getResource("pipe_power_teleport"));
             // Unlocalized name must match the lang-file key in AP's lang files so the tooltip
             // resolves correctly; the "pipe.ap." prefix is AP's convention for all its pipe items.
             item.setUnlocalizedName("pipe.ap.pipe_power_teleport");
@@ -135,13 +134,13 @@ public class PowerTeleportPipeFix {
             // recipe book), second is the output, remaining varargs are the shapeless ingredients.
             // "dustRedstone" matches the OreDictionary entry for any redstone dust variant.
             ShapelessOreRecipe recipe = new ShapelessOreRecipe(
-                    new ResourceLocation("additionalpipes", "pipe_power_teleport"),
+                    Mods.AdditionalPipes.getResource("pipe_power_teleport"),
                     result,
                     new ItemStack(APPipeDefintions.itemsTeleportPipeItem, 1),
                     "dustRedstone");
             // setRegistryName() is required for Forge's recipe registry; reusing the pipe's
             // ResourceLocation is valid because recipe and item registries are separate namespaces.
-            recipe.setRegistryName(new ResourceLocation("additionalpipes", "pipe_power_teleport"));
+            recipe.setRegistryName(Mods.AdditionalPipes.getResource("pipe_power_teleport"));
             event.getRegistry().register(recipe);
             logger.info("Registered AP power teleport pipe recipe");
         } catch (Exception e) {

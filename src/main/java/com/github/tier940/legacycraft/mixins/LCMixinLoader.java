@@ -18,15 +18,16 @@ import zone.rong.mixinbooter.ILateMixinLoader;
 public class LCMixinLoader implements ILateMixinLoader {
 
     public static final Map<String, Boolean> modMixinsConfig = new ImmutableMap.Builder<String, Boolean>()
-            .put(Mods.Names.BUILDCRAFT_SILICON, true)
             .put(Mods.Names.LOGISTICS_PIPES, true)
-            .put(Mods.Names.ADDITIONAL_PIPES, true)
+            .put(Mods.Names.BUILDCRAFT_SILICON, Mods.BuildCraftSilicon.isModLoaded())
+            .put(Mods.Names.ADDITIONAL_PIPES, Mods.AdditionalPipes.isModLoaded())
             .build();
 
     @SuppressWarnings("SimplifyStreamApiCallChains")
     @Override
     public List<String> getMixinConfigs() {
-        return modMixinsConfig.keySet().stream().map(mod -> "mixins." + ModValues.MODID + "." + mod + ".json")
+        return modMixinsConfig.keySet().stream()
+                .map(mod -> "mixins." + ModValues.MODID + "." + mod + ".json")
                 .collect(Collectors.toList());
     }
 
@@ -47,10 +48,8 @@ public class LCMixinLoader implements ILateMixinLoader {
         }
 
         if (!Loader.isModLoaded(parts[2])) {
-            ModLog.logger.error(
-                    "Mod '{}' is not loaded. If this is a normal LC-Core instance, this is probably an error.",
-                    parts[2]);
-            ModLog.logger.error("Not Loading Mixin Config {}", mixinConfig);
+            ModLog.logger.info("Mod '{}' is not loaded. Skipping mixin config.", parts[2]);
+            ModLog.logger.info("Not Loading Mixin Config {}", mixinConfig);
             return false;
         }
 

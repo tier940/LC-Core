@@ -26,10 +26,10 @@ public class LCCoreMod implements IFMLLoadingPlugin {
     @Override
     public String[] getASMTransformerClass() {
         return new String[] {
-                // Drops the removed EnumGateModifier arg from GateVariant's constructor.
                 TRANSFORMER_PACKAGE + ".akutoengine.ObjHandlerTransformer",
-                // Drops the removed TileEntity arg from getReceiverToPower().
-                TRANSFORMER_PACKAGE + ".akutoengine.TileEntityTransformer"
+                TRANSFORMER_PACKAGE + ".akutoengine.TileEntityTransformer",
+                TRANSFORMER_PACKAGE + ".logisticspipes.MoveSolidsTransformer",
+                TRANSFORMER_PACKAGE + ".logisticspipes.CheckCraftingTransformer"
         };
     }
 

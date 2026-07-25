@@ -15,22 +15,16 @@ import logisticspipes.pipes.basic.CoreUnroutedPipe;
 import logisticspipes.proxy.SimpleServiceLocator;
 import logisticspipes.transport.PipeTransportLogistics;
 
-/**
- * Restores the RF and IC2 power-supplier connectivity checks dropped from LP 0.10.4.28+, so LP
- * pipes connect to Forge Energy receivers and IC2 energy sinks again. Injected at HEAD ahead of
- * the original early-return guards. EnderIO is not restored: LP 0.10.4.49 removed the EnderIO proxy
- * entirely (no field, no interface), so the check has no target.
- */
 @Mixin(value = PipeTransportLogistics.class, remap = false)
-public abstract class MixinPipeTransportLogistics {
+public abstract class MixinPowerConnectFix {
 
     @Shadow
     protected abstract CoreUnroutedPipe getPipe();
 
     @Inject(method = "canPipeConnect_internal", at = @At("HEAD"), cancellable = true)
-    private void lcCoreRestorePowerConnectivity(
-                                                TileEntity tile, EnumFacing side,
-                                                CallbackInfoReturnable<Boolean> cir) {
+    private void lc$restorePowerConnectivity(
+                                             TileEntity tile, EnumFacing side,
+                                             CallbackInfoReturnable<Boolean> cir) {
         IPipeUpgradeManager upgradeManager = getPipe().getUpgradeManager();
 
         if (upgradeManager.hasRFPowerSupplierUpgrade() &&

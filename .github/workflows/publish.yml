@@ -87,9 +87,12 @@ jobs:
           curseforge-token: "${{ secrets.CURSEFORGE_API_KEY }}"
           curseforge-dependencies: |
             mixin-booter(required)
-            bc-remastered(required)
             logistics-pipes(required)
-            additional-pipes-for-buildcraft(required)
+            bc-remastered(optional)
+            akutolib(optional)
+            akuto-engine(optional)
+            additional-pipes-for-buildcraft(optional)
+            buildcraft(incompatible)
           files: |
             build/libs/!(*-@(dev|sources|javadoc)).jar
             build/libs/*-@(sources).jar
