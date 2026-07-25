@@ -1,4 +1,4 @@
-package com.github.tier940.legacycraft.mixins.logisticspipes.spec;
+package com.github.tier940.legacycraft.mixins.logisticspipes;
 
 import network.rs485.logisticspipes.module.AsyncExtractorModule;
 

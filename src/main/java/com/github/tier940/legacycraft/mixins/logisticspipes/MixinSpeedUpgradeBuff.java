@@ -1,4 +1,4 @@
-package com.github.tier940.legacycraft.mixins.logisticspipes.spec;
+package com.github.tier940.legacycraft.mixins.logisticspipes;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

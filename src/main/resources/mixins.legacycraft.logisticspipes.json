@@ -5,10 +5,12 @@
   "minVersion": "0.8",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "MixinExtractorBuff",
     "MixinInjectItemPerf",
     "MixinLogisticsManagerPerf",
     "MixinPowerConnectFix",
     "MixinServerRouterPerf",
+    "MixinSpeedUpgradeBuff",
     "MixinTransitPersistence"
   ],
   "client": [],
