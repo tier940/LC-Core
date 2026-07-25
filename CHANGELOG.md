@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * * *
 
+## [1.3.1]
+
+### Fixed
+
+- **Logistics Pipes: MK2/MK3 pipes displayed incorrect textures**
+    - Provider MK2, Crafting MK2, and Crafting MK3 pipes were missing `getCenterTexture()` overrides, causing them to render with the same texture as their base variants.
+
+- **Logistics Pipes: MK2/MK3 crafting recipes did not match the existing Logistics Pipes recipe system**
+    - Recipes now use the Programmer item and `RecipeManager` system, consistent with all other Logistics Pipes recipes.
+    - MK2 recipes use Advanced Chip; MK3 recipes use both FPGA Chip and Advanced Chip.
+    - Pipes and modules are registered with the Program Compiler categories so they can be researched.
+
+* * *
+
 ## [1.3.0]
 
 ### Added

@@ -10,6 +10,7 @@ import logisticspipes.modules.LogisticsModule;
 import logisticspipes.modules.ModuleCrafter;
 import logisticspipes.pipes.PipeItemsCraftingLogistics;
 import logisticspipes.pipes.basic.CoreRoutedPipe;
+import logisticspipes.textures.Textures;
 
 public class PipeCraftingMk2 extends PipeItemsCraftingLogistics {
 
@@ -27,6 +28,11 @@ public class PipeCraftingMk2 extends PipeItemsCraftingLogistics {
             f.setAccessible(true);
             f.set(this, mk2);
         } catch (Exception ignored) {}
+    }
+
+    @Override
+    public Textures.TextureType getCenterTexture() {
+        return Textures.LOGISTICSPIPE_CRAFTERMK2_TEXTURE;
     }
 
     @Override

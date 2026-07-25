@@ -9,6 +9,7 @@ import com.github.tier940.legacycraft.integration.logisticspipes.spec.modules.Mo
 import logisticspipes.modules.LogisticsModule;
 import logisticspipes.modules.ModuleProvider;
 import logisticspipes.pipes.PipeItemsProviderLogistics;
+import logisticspipes.textures.Textures;
 
 public class PipeProviderMk2 extends PipeItemsProviderLogistics {
 
@@ -26,6 +27,11 @@ public class PipeProviderMk2 extends PipeItemsProviderLogistics {
             f.setAccessible(true);
             f.set(this, mk2);
         } catch (Exception ignored) {}
+    }
+
+    @Override
+    public Textures.TextureType getCenterTexture() {
+        return Textures.LOGISTICSPIPE_PROVIDERMK2_TEXTURE;
     }
 
     @Override

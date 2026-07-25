@@ -56,10 +56,10 @@ public class LogisticsPipesModule extends LCIntegrationSubmodule {
 
     @Override
     public void registerRecipesNormal(RegistryEvent.Register<IRecipe> event) {
-        Mk2ModuleRecipes.register(event);
-        Mk2PipeRecipes.register(event);
-        Mk3ModuleRecipes.register(event);
-        Mk3PipeRecipes.register(event);
+        Mk2ModuleRecipes.register();
+        Mk2PipeRecipes.register();
+        Mk3ModuleRecipes.register();
+        Mk3PipeRecipes.register();
     }
 
     @Override

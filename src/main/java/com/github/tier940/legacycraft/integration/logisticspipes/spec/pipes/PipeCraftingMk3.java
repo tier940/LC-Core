@@ -11,6 +11,7 @@ import logisticspipes.modules.LogisticsModule;
 import logisticspipes.modules.ModuleCrafter;
 import logisticspipes.pipes.PipeItemsCraftingLogistics;
 import logisticspipes.pipes.basic.CoreRoutedPipe;
+import logisticspipes.textures.Textures;
 import logisticspipes.utils.item.ItemIdentifierStack;
 
 public class PipeCraftingMk3 extends PipeItemsCraftingLogistics implements IBufferItems {
@@ -29,6 +30,11 @@ public class PipeCraftingMk3 extends PipeItemsCraftingLogistics implements IBuff
             f.setAccessible(true);
             f.set(this, mk3);
         } catch (Exception ignored) {}
+    }
+
+    @Override
+    public Textures.TextureType getCenterTexture() {
+        return Textures.LOGISTICSPIPE_CRAFTERMK3_TEXTURE;
     }
 
     @Override
