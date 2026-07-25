@@ -71,7 +71,7 @@ public class Mk2ModuleRecipes {
     }
 
     private static void registerModuleCategory(
-            ResourceLocation category, ResourceLocation moduleRL) {
+                                               ResourceLocation category, ResourceLocation moduleRL) {
         if (!LogisticsProgramCompilerTileEntity.programByCategory.containsKey(category)) {
             LogisticsProgramCompilerTileEntity.programByCategory.put(
                     category, new java.util.HashSet<>());

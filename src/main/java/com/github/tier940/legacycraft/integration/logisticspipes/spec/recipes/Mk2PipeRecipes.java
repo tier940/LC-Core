@@ -62,7 +62,7 @@ public class Mk2PipeRecipes {
     }
 
     private static void registerPipeRecipeCategory(
-            net.minecraft.util.ResourceLocation category, Item pipe) {
+                                                   net.minecraft.util.ResourceLocation category, Item pipe) {
         if (!LogisticsProgramCompilerTileEntity.programByCategory.containsKey(category)) {
             LogisticsProgramCompilerTileEntity.programByCategory.put(
                     category, new java.util.HashSet<>());
