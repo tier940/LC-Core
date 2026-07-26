@@ -7,6 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * * *
 
+## [1.3.2]
+
+### Changed
+
+- **Logistics Pipes: Provider Module inventory cache restored to all providers**
+    - The per-tick inventory cache that avoids rebuilding the Stream pipeline each call is now applied to MK1 providers as well, not just MK2.
+
+- **Logistics Pipes: Teleport pipe adjacency boost restored to all providers**
+    - The extraction boost when a Provider is adjacent to an AP teleport pipe is now applied to MK1 providers as well.
+
+- **Logistics Pipes: Crafting Module MK3 buffer push optimised**
+    - Hoisted upgrade manager and order checks out of the per-slot loop. Buffer push is skipped entirely when the buffer is empty.
+
+- **Logistics Pipes: Extractor Module connected inventory lookup cached per tick**
+    - The Extractor rebuilt its adjacent inventory list from scratch every tick. Now cached and reused within the same tick.
+
+- **Logistics Pipes: eliminated per-tick allocations in all pipe tile entities**
+    - StackTraceUtil lambda and array allocations that ran every tick on every pipe (even with debug disabled) are now bypassed with a singleton dummy.
+
+### Fixed
+
+- **Logistics Pipes: items vanished when fulfilling craft requests (MK1 Crafter)**
+    - The same dispatch fix previously only in MK2/MK3 is now applied to the MK1 Crafting Module via Mixin.
+
+- **Logistics Pipes: Crafting Module MK3 crashed on world save**
+    - Buffer contents are now correctly saved and restored across world reloads.
+
+* * *
+
 ## [1.3.1]
 
 ### Fixed

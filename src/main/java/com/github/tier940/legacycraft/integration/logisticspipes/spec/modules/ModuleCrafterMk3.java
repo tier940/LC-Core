@@ -124,20 +124,23 @@ public class ModuleCrafterMk3 extends ModuleCrafterMk2 implements IBufferItems {
     }
 
     private void pushBufferToAdjacentInventories(IPipeServiceProvider service) {
+        if (isBufferEmpty()) return;
+
         List<NeighborTileEntity<TileEntity>> inventories = service.getAvailableAdjacent().inventories();
         if (inventories.isEmpty()) return;
+
+        boolean hasOrders = service.getItemOrderManager().hasOrders(
+                IOrderInfoProvider.ResourceType.CRAFTING, IOrderInfoProvider.ResourceType.EXTRA);
+        ISlotUpgradeManager upgradeManager = this.getUpgradeManager();
+        EnumFacing sneaky = upgradeManager.hasSneakyUpgrade() ? upgradeManager.getSneakyOrientation() : null;
+        boolean dirty = false;
 
         for (int i = 0; i < BUFFER_SLOTS; i++) {
             if (buffer[i].isEmpty()) continue;
 
-            if (service.getItemOrderManager().hasOrders(
-                    IOrderInfoProvider.ResourceType.CRAFTING, IOrderInfoProvider.ResourceType.EXTRA)) {
+            if (hasOrders) {
                 for (NeighborTileEntity<TileEntity> neighbor : inventories) {
-                    ISlotUpgradeManager upgradeManager = this.getUpgradeManager();
-                    EnumFacing sneaky = upgradeManager.hasSneakyUpgrade() ? upgradeManager.getSneakyOrientation() :
-                            null;
                     EnumFacing insertDir = sneaky != null ? sneaky : neighbor.getDirection();
-
                     net.minecraftforge.items.IItemHandler handler = neighbor.getTileEntity()
                             .getCapability(net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY,
                                     insertDir.getOpposite());
@@ -147,21 +150,32 @@ public class ModuleCrafterMk3 extends ModuleCrafterMk2 implements IBufferItems {
                             .insertItemStacked(handler, buffer[i].copy(), false);
                     if (remaining.isEmpty()) {
                         buffer[i] = ItemStack.EMPTY;
-                        service.getCacheHolder().trigger(CacheHolder.CacheTypes.Inventory);
+                        dirty = true;
                         break;
                     } else if (remaining.getCount() < buffer[i].getCount()) {
                         buffer[i].setCount(remaining.getCount());
-                        service.getCacheHolder().trigger(CacheHolder.CacheTypes.Inventory);
+                        dirty = true;
                     }
                 }
             } else {
                 service.queueRoutedItem(
-                        SimpleServiceLocator.routedItemHelper.createNewTravelItem(buffer[i]),
+                        SimpleServiceLocator.routedItemHelper.createNewTravelItem(buffer[i].copy()),
                         EnumFacing.UP);
                 buffer[i] = ItemStack.EMPTY;
-                service.getCacheHolder().trigger(CacheHolder.CacheTypes.Inventory);
+                dirty = true;
             }
         }
+
+        if (dirty) {
+            service.getCacheHolder().trigger(CacheHolder.CacheTypes.Inventory);
+        }
+    }
+
+    private boolean isBufferEmpty() {
+        for (int i = 0; i < BUFFER_SLOTS; i++) {
+            if (!buffer[i].isEmpty()) return false;
+        }
+        return true;
     }
 
     public void dropBuffer(net.minecraft.world.World world, net.minecraft.util.math.BlockPos pos) {
@@ -188,15 +202,9 @@ public class ModuleCrafterMk3 extends ModuleCrafterMk2 implements IBufferItems {
         }
     }
 
+    @Override
     public void writeToNBT(NBTTagCompound nbt) {
-        try {
-            java.lang.reflect.Method m = logisticspipes.modules.ModuleCrafter.class
-                    .getMethod("writeToNBT", NBTTagCompound.class);
-            if (m.getDeclaringClass() != ModuleCrafterMk3.class) {
-                m.invoke(this, nbt);
-            }
-        } catch (Exception ignored) {}
-
+        super.writeToNBT(nbt);
         NBTTagCompound bufferTag = new NBTTagCompound();
         for (int i = 0; i < BUFFER_SLOTS; i++) {
             if (!buffer[i].isEmpty()) {

@@ -1,4 +1,4 @@
-package com.github.tier940.legacycraft.integration.logisticspipes.spec.modules;
+package com.github.tier940.legacycraft.mixins.logisticspipes;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -7,15 +7,25 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import network.rs485.logisticspipes.connection.NeighborTileEntity;
+import network.rs485.logisticspipes.inventory.IItemIdentifierInventory;
+import network.rs485.logisticspipes.property.BooleanProperty;
+import network.rs485.logisticspipes.property.ItemIdentifierInventoryProperty;
+
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
 
 import logisticspipes.interfaces.IPipeServiceProvider;
 import logisticspipes.interfaces.ISlotUpgradeManager;
 import logisticspipes.logistics.LogisticsManager;
 import logisticspipes.logisticspipes.IRoutedItem;
+import logisticspipes.modules.LogisticsModule;
 import logisticspipes.modules.ModuleCrafter;
 import logisticspipes.pipefxhandlers.Particles;
 import logisticspipes.pipes.basic.CoreRoutedPipe;
 import logisticspipes.proxy.SimpleServiceLocator;
+import logisticspipes.request.resources.IResource;
 import logisticspipes.routing.order.IOrderInfoProvider;
 import logisticspipes.routing.order.LogisticsItemOrder;
 import logisticspipes.transport.LPTravelingItem;
@@ -24,33 +34,56 @@ import logisticspipes.utils.SinkReply;
 import logisticspipes.utils.item.ItemIdentifier;
 import logisticspipes.utils.item.ItemIdentifierStack;
 
-public class ModuleCrafterMk2 extends ModuleCrafter {
+@Mixin(value = ModuleCrafter.class, remap = false)
+public abstract class MixinCrafterOverflow extends LogisticsModule {
 
-    public static String getName() {
-        return "crafter_mk2";
+    @Shadow
+    private WeakReference<TileEntity> lastAccessedCrafter;
+
+    @Shadow
+    private boolean cachedAreAllOrderesToBuffer;
+
+    @Final
+    @Shadow
+    public ItemIdentifierInventoryProperty cleanupInventory;
+
+    @Final
+    @Shadow
+    public BooleanProperty cleanupModeIsExclude;
+
+    @Shadow
+    public abstract void cacheAreAllOrderesToBuffer();
+
+    @Shadow
+    public abstract List<ItemIdentifierStack> getCraftedItems();
+
+    @Shadow
+    protected abstract int itemsToExtract();
+
+    @Shadow
+    protected abstract int stacksToExtract();
+
+    @Shadow
+    private ItemStack extract(NeighborTileEntity<TileEntity> adjacent, IResource item, int amount) {
+        throw new AssertionError();
     }
 
-    @Override
-    public String getLPName() {
-        return getName();
+    @Shadow
+    private ItemStack extractFiltered(NeighborTileEntity<TileEntity> neighbor,
+                                      IItemIdentifierInventory inv, boolean isExcluded, int filterInvLimit) {
+        throw new AssertionError();
     }
 
-    @Override
-    protected int neededEnergy() {
-        return 15;
+    @Shadow
+    private boolean isExtractedMismatch(LogisticsItemOrder nextOrder, ItemIdentifier extractedID) {
+        throw new AssertionError();
     }
 
-    @Override
-    protected int itemsToExtract() {
-        return 64;
-    }
-
-    @Override
-    protected int stacksToExtract() {
-        return 1;
-    }
-
-    @Override
+    /**
+     * @author LC-Core
+     * @reason Fix item loss: never skip sending after extraction
+     */
+    @Overwrite
     public void enabledUpdateEntity() {
         IPipeServiceProvider service = this._service;
         if (service == null) return;
@@ -61,7 +94,7 @@ public class ModuleCrafterMk2 extends ModuleCrafter {
                 this.cacheAreAllOrderesToBuffer();
             }
             if (service.getItemOrderManager().isFirstOrderWatched()) {
-                TileEntity tile = getLastAccessedCrafter();
+                TileEntity tile = this.lastAccessedCrafter.get();
                 if (tile != null) {
                     service.getItemOrderManager().setMachineProgress(
                             SimpleServiceLocator.machineProgressProvider.getProgressForTile(tile));
@@ -70,7 +103,7 @@ public class ModuleCrafterMk2 extends ModuleCrafter {
                 }
             }
         } else {
-            setCachedAreAllOrderesToBuffer(false);
+            this.cachedAreAllOrderesToBuffer = false;
         }
 
         if (!service.isNthTick(6)) return;
@@ -82,7 +115,8 @@ public class ModuleCrafterMk2 extends ModuleCrafter {
             ISlotUpgradeManager upgradeManager = this.getUpgradeManager();
             if (upgradeManager.getCrafterCleanup() > 0) {
                 adjacentInventories.stream()
-                        .map(neighbor -> extractFilteredForCleanup(neighbor, upgradeManager))
+                        .map(neighbor -> this.extractFiltered(neighbor, this.cleanupInventory,
+                                this.cleanupModeIsExclude.getValue(), upgradeManager.getCrafterCleanup() * 3))
                         .filter(stack -> !stack.isEmpty())
                         .findFirst()
                         .ifPresent(extracted -> {
@@ -134,7 +168,7 @@ public class ModuleCrafterMk2 extends ModuleCrafter {
             }
 
             service.getCacheHolder().trigger(CacheHolder.CacheTypes.Inventory);
-            setLastAccessedCrafter(adjacent.getTileEntity());
+            this.lastAccessedCrafter = new WeakReference<>(adjacent.getTileEntity());
             ItemIdentifier extractedID = ItemIdentifier.get(extracted);
 
             while (!extracted.isEmpty()) {
@@ -155,7 +189,7 @@ public class ModuleCrafterMk2 extends ModuleCrafter {
                         --stacksLeft;
                         itemsLeft -= numToSend;
                         ItemStack stackToSend = extracted.splitStack(numToSend);
-                        service.sendStack(stackToSend, -1, CoreRoutedPipe.ItemSendMode.Fast, null,
+                        service.sendStack(stackToSend, -1, CoreRoutedPipe.ItemSendMode.Normal, null,
                                 adjacent.getDirection());
                         continue;
                     }
@@ -185,7 +219,7 @@ public class ModuleCrafterMk2 extends ModuleCrafter {
                     service.queueRoutedItem(item, adjacent.getDirection());
                     service.getItemOrderManager().sendSuccessfull(stackToSend.getCount(), deferSend, item);
                 } else {
-                    service.sendStack(stackToSend, -1, CoreRoutedPipe.ItemSendMode.Fast,
+                    service.sendStack(stackToSend, -1, CoreRoutedPipe.ItemSendMode.Normal,
                             nextOrder.getInformation(), adjacent.getDirection());
                     service.getItemOrderManager().sendSuccessfull(stackToSend.getCount(), false, null);
                 }
@@ -198,72 +232,6 @@ public class ModuleCrafterMk2 extends ModuleCrafter {
                         .peekAtTopRequest(IOrderInfoProvider.ResourceType.CRAFTING,
                                 IOrderInfoProvider.ResourceType.EXTRA);
             }
-        }
-    }
-
-    private TileEntity getLastAccessedCrafter() {
-        try {
-            java.lang.reflect.Field f = ModuleCrafter.class.getDeclaredField("lastAccessedCrafter");
-            f.setAccessible(true);
-            WeakReference<?> ref = (WeakReference<?>) f.get(this);
-            return ref != null ? (TileEntity) ref.get() : null;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    private void setLastAccessedCrafter(TileEntity tile) {
-        try {
-            java.lang.reflect.Field f = ModuleCrafter.class.getDeclaredField("lastAccessedCrafter");
-            f.setAccessible(true);
-            f.set(this, new WeakReference<>(tile));
-        } catch (Exception ignored) {}
-    }
-
-    private void setCachedAreAllOrderesToBuffer(boolean value) {
-        try {
-            java.lang.reflect.Field f = ModuleCrafter.class.getDeclaredField("cachedAreAllOrderesToBuffer");
-            f.setAccessible(true);
-            f.setBoolean(this, value);
-        } catch (Exception ignored) {}
-    }
-
-    private ItemStack extract(NeighborTileEntity<TileEntity> adjacent,
-                              logisticspipes.request.resources.IResource item, int amount) {
-        try {
-            java.lang.reflect.Method m = ModuleCrafter.class.getDeclaredMethod(
-                    "extract", NeighborTileEntity.class,
-                    logisticspipes.request.resources.IResource.class, int.class);
-            m.setAccessible(true);
-            return (ItemStack) m.invoke(this, adjacent, item, amount);
-        } catch (Exception e) {
-            return ItemStack.EMPTY;
-        }
-    }
-
-    private ItemStack extractFilteredForCleanup(NeighborTileEntity<TileEntity> neighbor,
-                                                ISlotUpgradeManager upgradeManager) {
-        try {
-            java.lang.reflect.Method m = ModuleCrafter.class.getDeclaredMethod(
-                    "extractFiltered", NeighborTileEntity.class,
-                    network.rs485.logisticspipes.inventory.IItemIdentifierInventory.class,
-                    boolean.class, int.class);
-            m.setAccessible(true);
-            return (ItemStack) m.invoke(this, neighbor, this.cleanupInventory,
-                    this.cleanupModeIsExclude.getValue(), upgradeManager.getCrafterCleanup() * 3);
-        } catch (Exception e) {
-            return ItemStack.EMPTY;
-        }
-    }
-
-    private boolean isExtractedMismatch(LogisticsItemOrder nextOrder, ItemIdentifier extractedID) {
-        try {
-            java.lang.reflect.Method m = ModuleCrafter.class.getDeclaredMethod(
-                    "isExtractedMismatch", LogisticsItemOrder.class, ItemIdentifier.class);
-            m.setAccessible(true);
-            return (boolean) m.invoke(this, nextOrder, extractedID);
-        } catch (Exception e) {
-            return false;
         }
     }
 }
