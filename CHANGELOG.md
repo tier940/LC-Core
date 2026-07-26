@@ -26,14 +26,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Logistics Pipes: eliminated per-tick allocations in all pipe tile entities**
     - StackTraceUtil lambda and array allocations that ran every tick on every pipe (even with debug disabled) are now bypassed with a singleton dummy.
 
-### Fixed
-
-- **Logistics Pipes: items vanished when fulfilling craft requests (MK1 Crafter)**
-    - The same dispatch fix previously only in MK2/MK3 is now applied to the MK1 Crafting Module via Mixin.
-
-- **Logistics Pipes: Crafting Module MK3 crashed on world save**
-    - Buffer contents are now correctly saved and restored across world reloads.
-
 * * *
 
 ## [1.3.1]
