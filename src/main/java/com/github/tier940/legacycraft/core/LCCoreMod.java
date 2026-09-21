@@ -27,7 +27,9 @@ public class LCCoreMod implements IFMLLoadingPlugin {
     public String[] getASMTransformerClass() {
         return new String[] {
                 TRANSFORMER_PACKAGE + ".akutoengine.ObjHandlerTransformer",
+                TRANSFORMER_PACKAGE + ".akutoengine.PEEXObjHandlerFixTransformer",
                 TRANSFORMER_PACKAGE + ".akutoengine.TileEntityTransformer",
+                TRANSFORMER_PACKAGE + ".akutoengine.WorldInnerClassFixTransformer",
                 TRANSFORMER_PACKAGE + ".logisticspipes.MoveSolidsTransformer",
                 TRANSFORMER_PACKAGE + ".logisticspipes.CheckCraftingTransformer"
         };
