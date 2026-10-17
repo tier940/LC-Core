@@ -32,7 +32,7 @@ plugins {
     id 'com.gradleup.shadow' version '8.3.5' apply false
     id 'org.jetbrains.kotlin.jvm' version '1.8.0' apply false
     id 'org.jetbrains.kotlin.kapt' version '1.8.0' apply false
-    id 'com.google.devtools.ksp' version '1.8.0-1.0.9' apply false
+    id 'com.google.devtools.ksp' version '1.9.25-1.0.20' apply false
 }
 
 def out = services.get(StyledTextOutputFactory).create('an-output')
